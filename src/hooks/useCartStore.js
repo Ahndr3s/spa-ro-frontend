@@ -28,7 +28,7 @@ export const useCartStore = () => {
       Swal.fire('Error at saving ', error.response.data.msg, 'error')
     }
   };
-
+  
   const startDeletingCostumeOnCart = () => {
     try {
       dispatch(onDeleteCostumeOnCart());

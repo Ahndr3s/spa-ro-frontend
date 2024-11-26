@@ -14,12 +14,16 @@ import logo from "../../assets/logo.png";
 import { SidePanel } from "./SidePanel";
 import { useCostumeStore } from "../hooks/useCostumeStore";
 import { useCartStore } from "../hooks/useCartStore";
+import { useDispatch } from "react-redux";
+import { toggleSidePanel } from "../store/SidePanelSlice";
 
-export const Navbar = (props) => {
+
+export const Navbar = () => {
+  const dispatch = useDispatch()
   const [showNavbar, setShowNavbar] = useState(false);
   const [setShowCartbar] = useState(false);
   // const { status, checkAuthToken, startLogout, user } = useAuthStore();
-  const { showSidePanel, onToggleSidePanel } = props;
+
   const { activeCostume } = useCostumeStore();
   const { cartCostumes } = useCartStore();
 
@@ -30,12 +34,9 @@ export const Navbar = (props) => {
     }
   };
 
-  // const handleShowCartbar = () => {
-  //   setShowCartbar(!showCartbar);
-  //   if (!showCartbar) {
-  //     setShowNavbar(false); // Cierra el navbar si se abre el cartbar
-  //   }
-  // };
+  const handleShowSidePanel = () => {
+    dispatch(toggleSidePanel())
+  };
 
   // const handleShowSearch = () => {
   //   navigate("/SearchPage", {
@@ -120,7 +121,7 @@ export const Navbar = (props) => {
           size="2x"
           style={{ color: `#fff`, paddingLeft: "2rem" }}
         />
-        <div onClick={onToggleSidePanel}>
+        <div onClick={handleShowSidePanel}>
           <FontAwesomeIcon
             icon={faCartShopping}
             size="2x"
@@ -131,20 +132,14 @@ export const Navbar = (props) => {
       {activeCostume ? (
         <SidePanel
           panelType={3}
-          showSidePanel={showSidePanel}
-          onToggleSidePanel={onToggleSidePanel}
         />
       ) : cartCostumes && cartCostumes.length > 0 ? (
         <SidePanel
           panelType={1}
-          showSidePanel={showSidePanel}
-          onToggleSidePanel={onToggleSidePanel}
         />
       ) : (
         <SidePanel
           panelType={2}
-          showSidePanel={showSidePanel}
-          onToggleSidePanel={onToggleSidePanel}
         />
       )}
     </nav>
@@ -153,5 +148,4 @@ export const Navbar = (props) => {
 
 Navbar.propTypes = {
   showSidePanel: PropTypes.bool,
-  onToggleSidePanel: PropTypes.func,
 };

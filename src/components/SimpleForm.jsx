@@ -44,7 +44,7 @@ export const SimpleForm = (props) => {
       );
       break;
 
-          // CONTACT FORM
+    // CONTACT FORM
     case 3:
         formOption = (
           <form className="simple-form">

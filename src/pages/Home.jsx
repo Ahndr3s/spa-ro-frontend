@@ -1,16 +1,12 @@
-import PropTypes from "prop-types";
 import { NewsBanner } from "../components/NewsBanner";
 import "./HomeStyles.css";
 
-export const Home = ({ onToggleSidePanel }) => {
+export const Home = () => {
 
   return (
     <>
-      <NewsBanner onToggleSidePanel={onToggleSidePanel}/>  
+      <NewsBanner/>  
     </>
   );
 };
 
-Home.propTypes = {
-  onToggleSidePanel: PropTypes.any
-};

@@ -3,6 +3,7 @@ import { authSlice } from "./authSlice";
 import { costumeSlice } from "./costumeSlice";
 import { orderSlice } from "./orderSlice";
 import { cartSlice } from './cartSlice';
+import { sidePanelSlice } from './SidePanelSlice';
 
 
 export default configureStore({
@@ -10,6 +11,7 @@ export default configureStore({
       auth: authSlice.reducer,
       costume: costumeSlice.reducer,
       order: orderSlice.reducer,
-      costumeOnCart: cartSlice.reducer
+      costumeOnCart: cartSlice.reducer,
+      sidePanel: sidePanelSlice.reducer,
     },
   })

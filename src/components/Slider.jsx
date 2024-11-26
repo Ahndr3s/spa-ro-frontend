@@ -7,7 +7,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { Card } from "./Card";
 
-export const Slider = ({ type, cards, limit, onToggleSidePanel }) => {
+export const Slider = ({ type, cards, limit }) => {
   const [card, setcard] = useState(0);
   const [currentSlide, setcurrentSlide] = useState(0);
   const sliderRef = useRef(null);
@@ -111,7 +111,6 @@ export const Slider = ({ type, cards, limit, onToggleSidePanel }) => {
             size={card.size}
             subtitle1={card.subtitle1}
             subtitle2={card.subtitle2}
-            onToggleSidePanel={onToggleSidePanel}
             />
           ))}
         </div>
@@ -131,5 +130,4 @@ Slider.propTypes = {
   type: PropTypes.number,
   limit: PropTypes.number,
   showSidePanel: PropTypes.bool,
-  onToggleSidePanel: PropTypes.any
 };

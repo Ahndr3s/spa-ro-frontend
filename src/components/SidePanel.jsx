@@ -1,26 +1,45 @@
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import "../index.css";
+import { toggleSidePanel } from "../store/SidePanelSlice";
 import { useCostumeStore } from "../hooks/useCostumeStore";
-import { Card } from "./Card";
 import { useCartStore } from "../hooks/useCartStore";
+import { Card } from "./Card";
+import "../index.css";
 
-export const SidePanel = ({ panelType, showSidePanel, onToggleSidePanel }) => {
+export const SidePanel = ({ panelType }) => {
   let panelOption;
+  const [Subtotal, setSubtotal] = useState(0);
   const { activeCostume } = useCostumeStore();
   const { cartCostumes } = useCartStore();
+  const dispatch = useDispatch();
+  const isVisible = useSelector((state) => state.sidePanel.isVisible);
+
+  const handleSeeProductOnCart = () => {
+    dispatch(toggleSidePanel());
+  };
+
+  // Update subtotal whenever cartCostumes changes
+  useEffect(() => {
+    const total = cartCostumes.reduce(
+      (acc, item) => acc + ((Number(item.price))* item.qty || 0),
+      0
+    );
+    setSubtotal(total);
+  }, [cartCostumes]);
 
   switch (panelType) {
     // PRODUCT LIST
     case 1:
       panelOption = (
-        <div className={`sidepanel ${showSidePanel ? "active" : ""}`}>
+        <div className={`sidepanel ${isVisible ? "active" : ""}`}>
           <div className="sidepanel-header-t1">
             <h3>Mi Carrito</h3>
           </div>
           <ul>
-            <li className="nav-item" onClick={onToggleSidePanel}>
+            <li className="nav-item" onClick={handleSeeProductOnCart}>
               {cartCostumes.map((card, index) => (
                 <Card
                   id={card.id}
@@ -30,13 +49,13 @@ export const SidePanel = ({ panelType, showSidePanel, onToggleSidePanel }) => {
                   img={card.img}
                   price={card.price}
                   size={card.size}
-                  onToggleSidePanel={onToggleSidePanel}
+                  qty={card.qty}
                 />
               ))}
             </li>
           </ul>
           <div className="sidepanel-footer">
-            Subtotal: $460
+            Subtotal: ${Subtotal}
             <button className="primary-btn-drk">Checkout</button>
           </div>
         </div>
@@ -46,7 +65,7 @@ export const SidePanel = ({ panelType, showSidePanel, onToggleSidePanel }) => {
     // CART EMPTY
     case 2:
       panelOption = (
-        <div className={`sidepanel ${showSidePanel ? "active" : ""}`}>
+        <div className={`sidepanel ${isVisible ? "active" : ""}`}>
           <div className="sidepanel-header-t2">
             <h3>Mi Carrito</h3>
           </div>
@@ -60,10 +79,10 @@ export const SidePanel = ({ panelType, showSidePanel, onToggleSidePanel }) => {
     // PRODUCT RESUME
     case 3:
       panelOption = (
-        <div className={`sidepanel ${showSidePanel ? "active" : ""}`}>
+        <div className={`sidepanel ${isVisible ? "active" : ""}`}>
           <div className="sidepanel-header-t3">
             <h3>Agregar al Carrito</h3>
-            <div className="x-contain" onClick={() => onToggleSidePanel(true)}>
+            <div className="x-contain" onClick={handleSeeProductOnCart}>
               <FontAwesomeIcon
                 icon={faXmark}
                 size="2x"
@@ -79,7 +98,6 @@ export const SidePanel = ({ panelType, showSidePanel, onToggleSidePanel }) => {
             img={activeCostume.img}
             price={activeCostume.price}
             size={activeCostume.size}
-            onToggleSidePanel={onToggleSidePanel}
           />
         </div>
       );
@@ -94,5 +112,4 @@ export const SidePanel = ({ panelType, showSidePanel, onToggleSidePanel }) => {
 SidePanel.propTypes = {
   panelType: PropTypes.number,
   showSidePanel: PropTypes.bool,
-  onToggleSidePanel: PropTypes.any,
 };

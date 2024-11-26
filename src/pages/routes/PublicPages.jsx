@@ -13,33 +13,20 @@ import { onSetActiveCostume } from "../../store/costumeSlice";
 
 export const PublicPages = () => {
   const [showSidePanel, setShowSidePanel] = useState(false);
-  // const {cartCostumes, startLoadingCostumesOnCart, setActiveCostumeOnCart, startSavingCostumeOnCart} = useCartStore()
   const dispatch = useDispatch();
 
-// const onToggleSidePanel = (unsetActiveCostume) => {
-const onToggleSidePanel = () => {
+  const onToggleSidePanel = () => {
     setShowSidePanel((prev) => !prev);
-
-    // if (unsetActiveCostume) {
-      dispatch(onSetActiveCostume(null));
-    // }
+    dispatch(onSetActiveCostume(null));
   };
 
   return (
     <>
-      <Navbar
-        showSidePanel={showSidePanel}
-        onToggleSidePanel={onToggleSidePanel}
-
-      />
+      <Navbar/>
       <Routes>
         <Route
           path="home"
-          element={
-            <Home
-              onToggleSidePanel={onToggleSidePanel}
-            />
-          }
+          element={<Home />}
         />
         <Route
           path="collections"
@@ -54,7 +41,6 @@ const onToggleSidePanel = () => {
         <Route path="about" element={<About />} />
         <Route path="contact" element={<Contact />} />
 
-        {/* <Route path="teamMember/:id" element={<TeamMember />} />*/}
         <Route path="productPage/:id" element={<ProductPage />} />
         <Route path="/" element={<Navigate to={"home"} />} />
       </Routes>

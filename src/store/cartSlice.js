@@ -12,7 +12,7 @@ export const cartSlice = createSlice({
       state.activeCostumeOnCart = payload;
     },
     onAddNewCostumeOnCart: (state, { payload }) => {
-      state.cartCostumes.push(payload);
+      state.cartCostumes.push({...payload, qty:1});
       state.activeCostumeOnCart = null;
     },
     onUpdateCostumeOnCart: (state, { payload }) => {
@@ -22,6 +22,13 @@ export const cartSlice = createSlice({
         }
         return costumeOnCart;
       });
+    },
+    onUpdateQtyCostumeOnCart: (state, action) => {
+      const { id, qty } = action.payload;
+      const product = state.cartCostumes.find((item) => item.id === id);
+      if (product) {
+        product.qty = qty;
+      }
     },
     onDeleteCostumeOnCart: (state) => {
         state.cartCostumes = state.cartCostumes.filter(
@@ -54,6 +61,7 @@ export const {
   onSetActiveCostumeOnCart,
   onAddNewCostumeOnCart,
   onUpdateCostumeOnCart,
+  onUpdateQtyCostumeOnCart,
   onDeleteCostumeOnCart,
   onLoadCostumesOnCart,
   onLogoutCostumesOnCart,

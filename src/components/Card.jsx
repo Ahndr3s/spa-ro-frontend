@@ -6,59 +6,54 @@ import { faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 import logo from "../../assets/logo.png";
 import { onSetActiveCostume, onUpdateCostumeSize } from "../store/costumeSlice";
-import { onSetActiveCostumeOnCart } from "../store/cartSlice";
+import {
+  onSetActiveCostumeOnCart,
+  onUpdateQtyCostumeOnCart,
+} from "../store/cartSlice";
 import { useCostumeStore } from "../hooks/useCostumeStore";
 import { useCartStore } from "../hooks/useCartStore";
+import { toggleSidePanel } from "../store/SidePanelSlice";
 
 export const Card = (props) => {
-  // console.log("Props in Card:", props);
   let cardOption;
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { onToggleSidePanel } = props;
   const { activeCostume } = useCostumeStore();
-  const {
-    startSavingCostumeOnCart,
-    startDeletingCostumeOnCart,
-  } = useCartStore();
-  const [chooseSize, setchooseSize] = useState(null)
+  const { startSavingCostumeOnCart, startDeletingCostumeOnCart } =
+    useCartStore();
+  const [chooseSize, setchooseSize] = useState(null);
 
-  // PRODUCT WINDOW FROM SLIDER
+  // PRODUCT WINDOW FROM CARD SLIDER
   const handleClickProductDetails = (props) => {
-    dispatch(onSetActiveCostume(props));
-    navigate(`/productPage/${props.id}`, {
-      replace: true,
-      state: { type: props.type, onToggleSidePanel  },
-    });
-  };
-
-  // PRODUCT WINDOW FROM PANEL
-  const handleClickLearnMore = (props) => {
-    dispatch(onSetActiveCostume(props));
-
-    if (typeof onToggleSidePanel === "function") {
-      onToggleSidePanel();
-    } else {
-      console.error("onToggleSidePanel is not defined");
-    }
     navigate(`/productPage/${props.id}`, {
       replace: true,
       state: { type: props.type },
     });
   };
 
-  // DEPLOY SIDEPANEL
-  const handleAddProduct = (e) => {
+  // LEADS TO PRODUCT PAGE FROM THE SIDEPANEL
+  const handleClickLearnMore = (props) => {
+    dispatch(onSetActiveCostume(props));
+    dispatch(toggleSidePanel());
+    navigate(`/productPage/${props.id}`, {
+      replace: true,
+      state: { type: props.type },
+    });
+  };
+
+  // SHOWS SIDEPANEL WITH THE CHOOSEN PRODUCT RESUME
+  const handleResumeProduct = (e) => {
     e.stopPropagation();
-    onToggleSidePanel();
+    dispatch(toggleSidePanel());
     dispatch(onSetActiveCostume(props));
   };
 
   // ADD PRODUCT TO CART FROM SIDEPANEL
   const handleAddProductToCart = () => {
-    // dispatch(onSetActiveCostume(props));
-    onToggleSidePanel();
-    startSavingCostumeOnCart(props);
+    dispatch(toggleSidePanel());
+    // startSavingCostumeOnCart(props);
+    startSavingCostumeOnCart({ id: props.id, qty: props.qty || 1, ...props });
+    dispatch(onSetActiveCostume(null));
   };
 
   // REMOVE PRODUCT FROM CART
@@ -73,6 +68,12 @@ export const Card = (props) => {
     setchooseSize(size);
     dispatch(onUpdateCostumeSize(size)); // Actualiza el tamaño en Redux
     // console.dir(activeCostume);
+  };
+
+  // SELECT QTY OF COSTUMES
+  const handleSelectQty = (e) => {
+    const selectedQty = parseInt(e.target.value, 10);
+    dispatch(onUpdateQtyCostumeOnCart({ id: props.id, qty: selectedQty }));
   };
 
   switch (props.type) {
@@ -91,7 +92,7 @@ export const Card = (props) => {
         >
           <img className="product-card-img" src={logo} />
           <div className="btn-container">
-            <div className="icon-btn" onClick={handleAddProduct}>
+            <div className="icon-btn" onClick={handleResumeProduct}>
               <FontAwesomeIcon
                 icon={faPlus}
                 size="2x"
@@ -141,18 +142,23 @@ export const Card = (props) => {
       cardOption = (
         <div
           className="cart-card"
-          onClick={() =>
-            handleClickProductDetails({
-              ...props,
-              id: props.id,
-              user: props.user,
-              type: 1,
-            })
-          }
+          onClick={(e) => {
+            // Evitar que el evento se ejecute si el target es el select
+            if (e.target.tagName === "SELECT" || e.target.closest(".qty")) {
+              handleClickProductDetails({
+                ...props,
+                id: props.id,
+                user: props.user,
+                type: 1,
+              });
+            }
+          }}
         >
-          <img className="cart-card-img" src={logo} />
-          <div className="cart-card-info">
-            <h4 className="product-title">{props.title}</h4>
+          <img className="cart-card-img" src={logo} id="cart-card-img" />
+          <div className="cart-card-info" id="cart-card-info">
+            <h4 className="product-title" id="product-title">
+              {props.title}
+            </h4>
             <h5 className="product-size">{props.size}</h5>
             <h5 className="product-price">${props.price}</h5>
           </div>
@@ -167,17 +173,21 @@ export const Card = (props) => {
                 style={{ color: `#fff`, paddingLeft: "1rem" }}
               />
             </div>
-            <select className="qty" name="qty" id="qty">
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-              <option value="6">6</option>
-              <option value="7">7</option>
-              <option value="8">8</option>
-              <option value="9">9</option>
-              <option value="10">10</option>
+            <select
+              className="qty"
+              name="qty"
+              id="qty"
+              onClick={(e) => {
+                e.stopPropagation(); // Detenemos la propagación
+              }}
+              onChange={handleSelectQty}
+              value={props.qty || 1} // Muestra el valor actual de `qty`
+            >
+              {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
+                <option key={`opt${num}`} value={num}>
+                  {num}
+                </option>
+              ))}
             </select>
           </div>
         </div>
@@ -194,10 +204,12 @@ export const Card = (props) => {
             <h5 className="product-res-price">${activeCostume?.price || ""}</h5>
           </div>
           <div className="sizes-res-matrix">
-          {['T2', 'T4', 'T6', 'T8', 'T10', 'T12'].map((size) => (
+            {["T2", "T4", "T6", "T8", "T10", "T12"].map((size) => (
               <div
                 key={size}
-                className={`res-size-btn ${chooseSize === size ? 'selected' : ''}`}
+                className={`res-size-btn ${
+                  chooseSize === size ? "selected" : ""
+                }`}
                 onClick={() => handleChooseSize(size)}
               >
                 {size}
@@ -243,6 +255,7 @@ Card.propTypes = {
   price: PropTypes.string,
   subtitle1: PropTypes.string,
   subtitle2: PropTypes.string,
+  setcostumeQty: PropTypes.any,
   user: PropTypes.any,
-  onToggleSidePanel: PropTypes.any,
+  qty: PropTypes.any,
 };

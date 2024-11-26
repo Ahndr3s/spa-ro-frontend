@@ -1,28 +1,29 @@
 import "./ProductPageStyles.css";
 import logo from "../../assets/logo.png";
 import { Slider } from "../components/Slider";
-// import { getContentsByType } from "../helpers/getContents";
-// import { contents } from "../../assets/contents";
 import { useEffect, useState } from "react";
 import { useCostumeStore } from "../hooks/useCostumeStore";
 import { useLocation, useParams } from "react-router-dom";
 import { getContentById } from "../helpers/getContentById";
-import { onUpdateCostumeSize } from "../store/costumeSlice";
 import { useDispatch } from "react-redux";
-
+import { toggleSidePanel } from "../store/SidePanelSlice";
+import { useCartStore } from "../hooks/useCartStore";
 
 export const ProductPage = () => {
-  // const filteredData = getContentsByType(contents, "1");
   const { id } = useParams();
   const location = useLocation();
-  const { type, onToggleSidePanel  } = location.state || {};
-  const { costumes, startLoadingCostumes, activeCostume} = useCostumeStore()
+  const { type } = location.state || {};
+  const { costumes, startLoadingCostumes, activeCostume } = useCostumeStore();
+  const { startSavingCostumeOnCart } = useCartStore();
   let content;
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   if (type === 1) {
     content = getContentById(type, costumes, id);
-    console.log('puedo alcanzar esto ',activeCostume)
+    console.log("puedo alcanzar este state ", activeCostume);
+    console.log("-------------------------------------------");
+    console.log("puedo alcanzar estos datos ", content);
+    console.log("-------------------------------------------");
   }
 
   useEffect(() => {
@@ -33,22 +34,27 @@ export const ProductPage = () => {
     startLoadingCostumes();
   }, [startLoadingCostumes]);
 
-    const [selectedSize, setSelectedSize] = useState(null);
-  
-    const handleChooseSize = (size) => {
-      setSelectedSize(size);
-      dispatch(onUpdateCostumeSize(size)); // Actualiza el tamaño en Redux
-      // console.dir(activeCostume);
-    };
+  const [selectedSize, setSelectedSize] = useState(null);
+  const [updatedContent, setUpdatedContent] = useState(null);
 
-    const handleAddOnCart = () => {
-      if (typeof onToggleSidePanel === "function") {
-        onToggleSidePanel();
-      } else {
-        console.error("onToggleSidePanel no está definido");
-      }
-      alert("Producto agregado al carrito");
+  const handleChooseSize = (size) => {
+    setSelectedSize(size);
+    if (content) {
+      // Crea una copia mutable del objeto `content`
+      const newContent = { ...content, size };
+      setUpdatedContent(newContent);
+      console.dir(updatedContent);
     }
+  };
+
+  const handleAddOnCart = () => {
+    if (!updatedContent) {
+      console.error("No hay datos para agregar al carrito");
+      return;
+    }
+    dispatch(toggleSidePanel());
+    startSavingCostumeOnCart(updatedContent);
+  };
 
   return (
     <>
@@ -59,10 +65,12 @@ export const ProductPage = () => {
           <h4>${content?.price}</h4>
           <h5>Cantidad</h5>
           <div className="sizes-matrix">
-          {['T2', 'T4', 'T6', 'T8', 'T10', 'T12'].map((size) => (
+            {["T2", "T4", "T6", "T8", "T10", "T12"].map((size) => (
               <div
                 key={size}
-                className={`product-size-btn ${selectedSize === size ? 'selected' : ''}`}
+                className={`product-size-btn ${
+                  selectedSize === size ? "selected" : ""
+                }`}
                 onClick={() => handleChooseSize(size)}
               >
                 {size}
@@ -71,7 +79,9 @@ export const ProductPage = () => {
           </div>
 
           <div className="product-btn">
-            <button className="primary-btn-drk" onClick={handleAddOnCart}>Agregar al carrito</button>
+            <button className="primary-btn-drk" onClick={handleAddOnCart}>
+              Agregar al carrito
+            </button>
           </div>
 
           <div className="product-info">
