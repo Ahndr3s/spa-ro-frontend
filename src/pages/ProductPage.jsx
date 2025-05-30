@@ -97,7 +97,7 @@ export const ProductPage = () => {
           <h4>${content?.price}</h4>
           {content.type == 1 && (
             <>
-                <Slider type={2} cards={products} limit={3} cardType={2} />
+                {/* <Slider type={2} cards={products} limit={3} cardType={2} /> */}
               <div className="tumb-prod-slider">
               </div>
               <h4>Tamaños Disponibles</h4>
