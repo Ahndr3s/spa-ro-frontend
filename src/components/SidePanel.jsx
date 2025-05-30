@@ -1,37 +1,142 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import { toggleSidePanel } from "../store/SidePanelSlice";
-import { useCostumeStore } from "../hooks/useCostumeStore";
+import {
+  toggleCreativeProdMode,
+  toggleDeletingProdMode,
+  onSetActiveProduct,
+} from "../store/productSlice";
+import {
+  toggleCreateBannerMode,
+  toggleDeletingBannerMode,
+  onSetActiveBanner,
+} from "../store/bannerSlice";
+import {
+  onSetActiveCategory,
+  toggleDeletingCatMode,
+} from "../store/categorySlice";
+import { onCheckingSale } from "../store/saleSlice";
+import { onLogoutProductsOnCart } from "../store/cartSlice";
+import { onSetActiveOrder } from "../store/orderSlice";
+import { useProductStore } from "../hooks/useProductStore";
+import { useBannerStore } from "../hooks/useBannerStore";
 import { useCartStore } from "../hooks/useCartStore";
+import { useAuthStore } from "../hooks/useAuthStore";
+import { useSalesStore } from "../hooks/useSalesStore";
+import { toggleSidePanel } from "../store/interactivePanels";
+import { useCategoryStore } from "../hooks/useCategoryStore";
 import { Card } from "./Card";
+import { SimpleForm } from "./SimpleForm";
 import "../index.css";
 
-export const SidePanel = ({ panelType }) => {
+export const SidePanel = ({ panelType, infoType }) => {
   let panelOption;
   const [Subtotal, setSubtotal] = useState(0);
-  const { activeCostume } = useCostumeStore();
-  const { cartCostumes } = useCartStore();
-  const dispatch = useDispatch();
-  const isVisible = useSelector((state) => state.sidePanel.isVisible);
+  const { activeProduct, startDeletingProduct } = useProductStore();
+  const { activeBanner, startDeletingBanner } = useBannerStore();
+  const { activeCategory, startDeletingCategory } = useCategoryStore();
+  const { activeSale, setActiveSale } = useSalesStore();
+  const { cartProducts } = useCartStore();
 
+  const createProduct = useSelector((state) => state.product.createProduct);
+  const createBanner = useSelector((state) => state.banner?.createBanner);
+  const createCategory = useSelector((state) => state.category?.createCategory);
+  const checkSale = useSelector((state) => state.sale.checkSale);
+  const isVisible = useSelector((state) => state.interactivePanels.sidePanelVisible);
+
+  const navigate = useNavigate();
+  const { status } = useAuthStore();
+  const dispatch = useDispatch();
+
+  // HIDES SIDEPANEL
   const handleSeeProductOnCart = () => {
+    if (status === "Authenticated") {
+      if (createProduct || infoType === 1) {
+        dispatch(toggleCreativeProdMode());
+      } else if (createBanner || infoType === 2) {
+        dispatch(toggleCreateBannerMode());
+        dispatch(onSetActiveBanner({}));
+      } else if (createCategory || infoType === 3) {
+        dispatch(toggleCreateBannerMode());
+        dispatch(onSetActiveBanner({}));
+      } else if (checkSale) {
+        dispatch(onCheckingSale());
+        setActiveSale({});
+      }
+    }
+    dispatch(onSetActiveProduct({}));
     dispatch(toggleSidePanel());
   };
 
-  // Update subtotal whenever cartCostumes changes
+  // SHOWS SIDEPANEL WITH THE CHOOSEN PRODUCT TO EDIT
+  const handleCancelProdDelete = (e) => {
+    e.stopPropagation();
+    dispatch(toggleDeletingProdMode());
+    dispatch(onSetActiveProduct(""));
+    dispatch(toggleSidePanel());
+  };
+
+  // SHOWS SIDEPANEL WITH THE CHOOSEN BANNER TO EDIT
+  const handleCancelBannerDelete = (e) => {
+    e.stopPropagation();
+    dispatch(toggleDeletingBannerMode());
+    dispatch(onSetActiveBanner(""));
+    dispatch(toggleSidePanel());
+  };
+
+  // SHOWS SIDEPANEL WITH THE CHOOSEN CATEGORY TO EDIT
+  const handleCancelCategoryDelete = (e) => {
+    e.stopPropagation();
+    dispatch(toggleDeletingCatMode());
+    dispatch(onSetActiveCategory(""));
+    dispatch(toggleSidePanel());
+  };
+
+  // DELETES THE SELECTED PRODUCT
+  const handleDeleteProduct = () => {
+    if (infoType !== "") startDeletingProduct();
+    else startDeletingBanner();
+  };
+
+  // DELETES THE SELECTED BANNER
+  const handleDeleteBanner = () => {
+    if (infoType !== "") startDeletingBanner();
+    else startDeletingBanner();
+  };
+
+  // DELETES THE SELECTED CATEGORY
+  const handleDeleteCategory = () => {
+    if (infoType !== "") startDeletingCategory();
+    else startDeletingCategory();
+  };
+
+  // LEADS TO checkoutPage PASSING THE cartProducts and subTotal VALUES
+  // TO ActiveOrder STATE
+  const handleCheckout = () => {
+    dispatch(
+      onSetActiveOrder({ sellingProducts: cartProducts, subTotal: Subtotal })
+    );
+    dispatch(onLogoutProductsOnCart());
+    dispatch(toggleSidePanel());
+    navigate(`/checkout`, {
+      replace: true,
+    });
+  };
+
+  // Update subtotal whenever cartProducts changes
   useEffect(() => {
-    const total = cartCostumes.reduce(
-      (acc, item) => acc + ((Number(item.price))* item.qty || 0),
+    const total = cartProducts.reduce(
+      (acc, item) => acc + (Number(item.price) * item.qty || 0),
       0
     );
     setSubtotal(total);
-  }, [cartCostumes]);
+  }, [cartProducts]);
 
   switch (panelType) {
-    // PRODUCT LIST
+    // CART PRODUCT LIST
     case 1:
       panelOption = (
         <div className={`sidepanel ${isVisible ? "active" : ""}`}>
@@ -40,11 +145,11 @@ export const SidePanel = ({ panelType }) => {
           </div>
           <ul>
             <li className="nav-item" onClick={handleSeeProductOnCart}>
-              {cartCostumes.map((card, index) => (
+              {cartProducts.map((card, index) => (
                 <Card
                   id={card.id}
                   key={`t1${index}`}
-                  type={3}
+                  cardType={3}
                   title={card.title}
                   img={card.img}
                   price={card.price}
@@ -56,7 +161,9 @@ export const SidePanel = ({ panelType }) => {
           </ul>
           <div className="sidepanel-footer">
             Subtotal: ${Subtotal}
-            <button className="primary-btn-drk">Checkout</button>
+            <button className="primary-btn-drk" onClick={handleCheckout}>
+              Checkout
+            </button>
           </div>
         </div>
       );
@@ -91,14 +198,191 @@ export const SidePanel = ({ panelType }) => {
             </div>
           </div>
           <Card
-            type={4}
-            id={activeCostume.id}
-            title={activeCostume.title}
-            info={activeCostume.info}
-            img={activeCostume.img}
-            price={activeCostume.price}
-            size={activeCostume.size}
+            cardType={4}
+            id={activeProduct.id}
+            title={activeProduct.title}
+            info={activeProduct.info}
+            img={activeProduct.img}
+            price={activeProduct.price}
+            size={activeProduct.size}
+            stock={activeProduct.stock}
+            type={activeProduct.type}
           />
+        </div>
+      );
+      break;
+
+    // PRODUCT/BANNER/CATEGORY FORM
+    case 4:
+      panelOption = (
+        <div className={`sidepanel ${isVisible ? "active" : ""}`}>
+          <div className="sidepanel-header-t3">
+            <h3>Action Producto</h3>
+            <div className="x-contain" onClick={handleSeeProductOnCart}>
+              <FontAwesomeIcon
+                icon={faXmark}
+                size="2x"
+                style={{ color: `#fff` }}
+              />
+            </div>
+          </div>
+          {createProduct && (
+            <SimpleForm formType={3} info={activeProduct || {}} />
+          )}
+          {createBanner && (
+            <SimpleForm formType={5} info={activeBanner || {}} />
+          )}
+          {createCategory && (
+            <SimpleForm formType={6} info={activeCategory || {}} />
+          )}
+        </div>
+      );
+      break;
+
+    // DELETING PRODUCT
+    case 5:
+      panelOption = (
+        <div className={`sidepanel ${isVisible ? "active" : ""}`}>
+          <div className="sidepanel-header-t2">
+            <h3>Eliminar Producto</h3>
+          </div>
+
+          <div className="deletingMsg">
+            <h2>
+              ¿Deseas eliminar a{" "}
+              {activeProduct.title ||
+                activeBanner.title ||
+                activeCategory.title}
+              ?
+            </h2>
+            <div className="deletingBtns">
+              {Object.keys(activeProduct).length !== 0 && (
+                <>
+                  <button
+                    className="primary-btn-drk"
+                    onClick={handleDeleteProduct}
+                  >
+                    Eliminar
+                  </button>
+                  <button
+                    className="primary-btn-drk"
+                    onClick={handleCancelProdDelete}
+                  >
+                    Cancelar
+                  </button>
+                </>
+              )}
+              {Object.keys(activeBanner).length !== 0 && (
+                <>
+                  <button
+                    className="primary-btn-drk"
+                    onClick={handleDeleteBanner}
+                  >
+                    Eliminar
+                  </button>
+                  <button
+                    className="primary-btn-drk"
+                    onClick={handleCancelBannerDelete}
+                  >
+                    Cancelar
+                  </button>
+                </>
+              )}
+              {Object.keys(activeCategory).length !== 0 && (
+                <>
+                  <button
+                    className="primary-btn-drk"
+                    onClick={handleDeleteCategory}
+                  >
+                    Eliminar
+                  </button>
+                  <button
+                    className="primary-btn-drk"
+                    onClick={handleCancelCategoryDelete}
+                  >
+                    Cancelar
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+      break;
+
+    // SALES LIST
+    case 6:
+      panelOption = (
+        <div className={`sidepanel ${isVisible ? "active" : ""}`}>
+          <div
+            className="x-contain"
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              marginRight: "3rem",
+            }}
+            onClick={handleSeeProductOnCart}
+          >
+            <FontAwesomeIcon
+              icon={faXmark}
+              size="2x"
+              style={{ color: `#fff` }}
+            />
+          </div>
+          <div className="sidepanel-header-t2">
+            <h3>MIS VENTAS</h3>
+          </div>
+          <div className="saleDetails">
+            <div className="saleDetails-fields">
+              Id: <em className="saleDetails-data">{activeSale.id}</em>
+            </div>
+            <div className="saleDetails-fields">
+              Fecha:{" "}
+              <em className="saleDetails-data">{activeSale.saleDate}</em>
+            </div>
+            <div className="saleDetails-fields">
+              Cliente:{" "}
+              <em className="saleDetails-data">{activeSale.clientName}</em>
+            </div>
+            <div className="saleDetails-fields">
+              Email de Cliente:{" "}
+              <em className="saleDetails-data">{activeSale.clientEmail}</em>
+            </div>
+            <div className="saleDetails-fields">
+              Dirección:{" "}
+              <em className="saleDetails-data">
+                {activeSale.contactAddress}
+              </em>
+            </div>
+            <ul className="saleDetails-prods" style={{marginBottom:'6rem'}}>
+              <li className="nav-item" onClick={handleSeeProductOnCart}>
+                {activeSale.sellingProducts.map((card, index) => (
+                  <Card
+                    id={card.id}
+                    key={`t1${index}`}
+                    cardType={3}
+                    title={card.title}
+                    img={card.img}
+                    price={card.price}
+                    size={card.size}
+                    qty={card.qty}
+                  />
+                ))}
+              </li>
+            </ul>
+            <div className="saleDetails-fields">
+              SubTotal: <em className="saleDetails-data">${activeSale.subTotal}</em>
+            </div>
+            <div className="saleDetails-fields">
+              IVA: <em className="saleDetails-data">${activeSale.iva}</em>
+            </div>
+            <div className="saleDetails-fields">
+              Tarifa de envio: <em className="saleDetails-data">${activeSale.regTariff}</em>
+            </div>
+            <div className="saleDetails-fields">
+              Total: <em className="saleDetails-data">${activeSale.total}</em>
+            </div>
+          </div>
         </div>
       );
       break;
@@ -112,4 +396,5 @@ export const SidePanel = ({ panelType }) => {
 SidePanel.propTypes = {
   panelType: PropTypes.number,
   showSidePanel: PropTypes.bool,
+  infoType: PropTypes.number,
 };

@@ -1,5 +1,5 @@
 
-export const getContentsByType = (collection, contentType, limit) => {
+export const getContentsByCategory = (collection, contentType, limit, category) => {
     const types = ["1", "2", "3", "5", "7"];
     let filteredContents
     if (!types.includes(String(contentType))) {
@@ -7,10 +7,7 @@ export const getContentsByType = (collection, contentType, limit) => {
     }
     
     // Filtra el contenido por el tipo especificado
-      filteredContents = collection.filter((content) => String(content.type) === contentType);
-      // console.log('I can get this mfs \n')
-      // console.dir(collection)
-
+      filteredContents = collection.filter((content) => String(content.type) === contentType && content?.category === category);
     
     // Si se proporciona un límite, devuelve los últimos 'limit' registros
     if (limit !== undefined) {

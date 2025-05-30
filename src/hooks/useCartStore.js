@@ -1,61 +1,71 @@
 import { useDispatch, useSelector } from "react-redux";
 import {
-  onLoadCostumesOnCart,
-  onAddNewCostumeOnCart,
-  onUpdateCostumeOnCart,
-  onSetActiveCostumeOnCart,
-  onDeleteCostumeOnCart,
+  onLoadProductsOnCart,
+  onAddNewProductOnCart,
+  onUpdateProductOnCart,
+  onSetActiveProductOnCart,
+  onDeleteProductOnCart,
+  onUpdateProductQty,
 } from "../store/cartSlice";
 import Swal from "sweetalert2";
 
 export const useCartStore = () => {
-  const { cartCostumes, activeCostumeOnCart } = useSelector((state) => state.costumeOnCart);
-  
   const dispatch = useDispatch();
+  const { cartProducts, activeProductOnCart, productsQty } = useSelector((state) => state.productOnCart);
 
-  const setActiveCostumeOnCart = (costumeOnCart) => {
-    dispatch(onSetActiveCostumeOnCart(costumeOnCart));
+  const setActiveProductOnCart = (productOnCart) => {
+    dispatch(onSetActiveProductOnCart(productOnCart));
   };
 
-  const startSavingCostumeOnCart = (costumeOnCart) => {
+  const startSavingProductOnCart = (productOnCart) => {
     try {
-      if (costumeOnCart.id) {
-        dispatch(onUpdateCostumeOnCart(costumeOnCart));
+      // if ( cartProducts.includes(productOnCart.id)) {
+      if ( cartProducts.some(prod => (prod.id === productOnCart.id && prod.size === productOnCart.size))) {
+        // alert('Ya habia llegado')
+        dispatch(onUpdateProductOnCart(productOnCart));
+      }else {
+        dispatch(onAddNewProductOnCart(productOnCart));
       }
-      dispatch(onAddNewCostumeOnCart(costumeOnCart));
+      // localStorage.setItem('productsOnCart', JSON.stringify(cartProducts))
     } catch (error) {
       console.log(error)
       Swal.fire('Error at saving ', error.response.data.msg, 'error')
     }
   };
   
-  const startDeletingCostumeOnCart = () => {
+  const startDeletingProductOnCart = () => {
     try {
-      dispatch(onDeleteCostumeOnCart());
+      dispatch(onDeleteProductOnCart());
     } catch (error) {
-      console.error("Error al intentar eliminar el disfraz del carrito", error);
+      console.error("Error al intentar eliminar el producto del carrito", error);
     }
   };
-
-  const startLoadingCostumesOnCart = () => {
+  
+  const startLoadingProductsOnCart = () => {
     try {
       // console.dir(data)
-      dispatch(onLoadCostumesOnCart(cartCostumes));
+      dispatch(onLoadProductsOnCart(cartProducts));      
     } catch (error) {
       console.log("Error loading costumes");
       console.log(error);
     }
   };
 
+  const startUpdatingProductQty = () => {
+    dispatch(onUpdateProductQty());
+  };
+
   return{
-    activeCostumeOnCart,
-    cartCostumes,
-    hasCostumeOnCArtSelected: !!activeCostumeOnCart,
+    activeProductOnCart,
+    cartProducts,
+    productsQty,
+    hasCostumeOnCArtSelected: !!activeProductOnCart,
 
     // METHODS
-    setActiveCostumeOnCart,
-    startSavingCostumeOnCart,
-    startDeletingCostumeOnCart,
-    startLoadingCostumesOnCart
+    setActiveProductOnCart,
+    startSavingProductOnCart,
+    startDeletingProductOnCart,
+    startLoadingProductsOnCart,
+    startUpdatingProductQty
   }
 };

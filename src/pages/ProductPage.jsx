@@ -1,29 +1,33 @@
-import "./ProductPageStyles.css";
-import logo from "../../assets/logo.png";
-import { Slider } from "../components/Slider";
 import { useEffect, useState } from "react";
-import { useCostumeStore } from "../hooks/useCostumeStore";
-import { useLocation, useParams } from "react-router-dom";
-import { getContentById } from "../helpers/getContentById";
 import { useDispatch } from "react-redux";
-import { toggleSidePanel } from "../store/SidePanelSlice";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import Swal from "sweetalert2";
+import { Slider } from "../components/Slider";
+import { useProductStore } from "../hooks/useProductStore";
+import { getContentById } from "../helpers/getContentById";
 import { useCartStore } from "../hooks/useCartStore";
+import { toggleSidePanel } from "../store/interactivePanels";
+import "./ProductPageStyles.css";
 
 export const ProductPage = () => {
   const { id } = useParams();
   const location = useLocation();
   const { type } = location.state || {};
-  const { costumes, startLoadingCostumes, activeCostume } = useCostumeStore();
-  const { startSavingCostumeOnCart } = useCartStore();
+  const { products, startLoadingProducts } = useProductStore();
+  const { startSavingProductOnCart, startUpdatingProductQty } = useCartStore();
+  const [sizesBtns, setSizeBtns] = useState([]);
   let content;
+  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [selectedSize, setSelectedSize] = useState(null);
+  const [updatedContent, setUpdatedContent] = useState(null);
 
   if (type === 1) {
-    content = getContentById(type, costumes, id);
-    console.log("puedo alcanzar este state ", activeCostume);
-    console.log("-------------------------------------------");
-    console.log("puedo alcanzar estos datos ", content);
-    console.log("-------------------------------------------");
+    content = getContentById(type, products, id);
+    // console.log("puedo alcanzar este state ", activeCostume);
+    // console.log("-------------------------------------------");
+    // console.log("puedo alcanzar estos datos ", content);
+    // console.log("-------------------------------------------");
   }
 
   useEffect(() => {
@@ -31,52 +35,87 @@ export const ProductPage = () => {
   }, []);
 
   useEffect(() => {
-    startLoadingCostumes();
-  }, [startLoadingCostumes]);
+    startLoadingProducts();
+  }, [startLoadingProducts]);
 
-  const [selectedSize, setSelectedSize] = useState(null);
-  const [updatedContent, setUpdatedContent] = useState(null);
+  useEffect(() => {
+    if (!content.size) return;
+    if (content.size === "1") {
+      setSizeBtns(["T2", "T4", "T6", "T8", "T10", "T12"]);
+    } else if (content.size === "2") {
+      setSizeBtns([
+        "T2",
+        "T4",
+        "T6",
+        "T8",
+        "T10",
+        "T12",
+        "T14",
+        "T16",
+        "T18",
+        "T20",
+      ]);
+    }
+  }, [content.size]);
 
+  // Observa el cambio en `selectedSize`
+  useEffect(() => {
+    // console.log("Elegiste este tamaño: " + selectedSize);
+    if (content && selectedSize) {
+      // Crea una copia mutable del objeto `content` con el tamaño seleccionado
+      setUpdatedContent({ ...content, size: selectedSize });
+    }
+  }, [selectedSize, content]);
+
+  // ALLOWS THE USER TO CHOOSE THE SIZE OF THE PRODUCT
   const handleChooseSize = (size) => {
     setSelectedSize(size);
-    if (content) {
-      // Crea una copia mutable del objeto `content`
-      const newContent = { ...content, size };
-      setUpdatedContent(newContent);
-      console.dir(updatedContent);
-    }
   };
 
+  // ADDS A PRODUCT TO THE SHOPPING CART
   const handleAddOnCart = () => {
     if (!updatedContent) {
-      console.error("No hay datos para agregar al carrito");
+      Swal.fire("Error", "Elige un tamaño", "error");
+      // console.error("No hay datos para agregar al carrito");
       return;
     }
     dispatch(toggleSidePanel());
-    startSavingCostumeOnCart(updatedContent);
+    // console.dir(updatedContent);
+    startSavingProductOnCart(updatedContent);
+    startUpdatingProductQty();
+    navigate(`/home`, {
+      replace: true,
+    });
   };
 
   return (
     <>
       <div className="product-container">
-        <img className="product-card-img" src={logo} />
+        <img className="product-card-img" src={content.img} />
         <div className="product-details">
           <h2>{content?.title}</h2>
           <h4>${content?.price}</h4>
-          <h5>Cantidad</h5>
-          <div className="sizes-matrix">
-            {["T2", "T4", "T6", "T8", "T10", "T12"].map((size) => (
-              <div
-                key={size}
-                className={`product-size-btn ${
-                  selectedSize === size ? "selected" : ""
-                }`}
-                onClick={() => handleChooseSize(size)}
-              >
-                {size}
+          {content.type == 1 && (
+            <>
+                <Slider type={2} cards={products} limit={3} cardType={2} />
+              <div className="tumb-prod-slider">
               </div>
-            ))}
-          </div>
+              <h4>Tamaños Disponibles</h4>
+              <div className="sizes-matrix">
+                {sizesBtns.map((size) => (
+                  <div
+                    key={size}
+                    className={`product-size-btn ${
+                      selectedSize === size ? "selected" : ""
+                    }`}
+                    onClick={() => handleChooseSize(size)}
+                  >
+                    {size}
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
 
           <div className="product-btn">
             <button className="primary-btn-drk" onClick={handleAddOnCart}>
@@ -102,7 +141,7 @@ export const ProductPage = () => {
       </div>
       <div className="related-items">
         <h3>Productos Relacionados</h3>
-        <Slider type={2} cards={costumes} limit={4} />
+        <Slider type={2} cards={products} limit={4} cardType={2} />
       </div>
     </>
   );

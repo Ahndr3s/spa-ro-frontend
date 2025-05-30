@@ -1,68 +1,79 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 export const cartSlice = createSlice({
-  name: "costumeOnCart",
+  name: "productOnCart",
   initialState: {
-    isLoadingCostumesOnCart: true,
-    cartCostumes: [],
-    activeCostumeOnCart: null,
+    isLoadingProductsOnCart: true,
+    cartProducts: [],
+    activeProductOnCart: {},
+    totalQty: [],
+    productsQty: 0,
   },
   reducers: {
-    onSetActiveCostumeOnCart: (state, { payload }) => {
-      state.activeCostumeOnCart = payload;
+    onSetActiveProductOnCart: (state, { payload }) => {
+      state.activeProductOnCart = payload;
     },
-    onAddNewCostumeOnCart: (state, { payload }) => {
-      state.cartCostumes.push({...payload, qty:1});
-      state.activeCostumeOnCart = null;
+    onAddNewProductOnCart: (state, { payload }) => {
+      state.cartProducts.push({...payload, qty:1});
+      state.activeProductOnCart = {};
     },
-    onUpdateCostumeOnCart: (state, { payload }) => {
-      state.cartCostumes = state.cartCostumes.map((costumeOnCart) => {
-        if (costumeOnCart.id === payload.id) {
-          return payload;
+    onUpdateProductOnCart: (state, { payload }) => {
+      state.cartProducts = state.cartProducts.map((productOnCart) => {
+        if (productOnCart.id === payload.id) {
+          // return payload;
+          return {
+            ...productOnCart,
+            qty: productOnCart.qty + 1,
+          };
         }
-        return costumeOnCart;
+        return productOnCart;
       });
     },
-    onUpdateQtyCostumeOnCart: (state, action) => {
+    onUpdateQtyProductsOnCart: (state, action) => {
       const { id, qty } = action.payload;
-      const product = state.cartCostumes.find((item) => item.id === id);
+      const product = state.cartProducts.find((item) => item.id === id);
       if (product) {
         product.qty = qty;
       }
     },
-    onDeleteCostumeOnCart: (state) => {
-        state.cartCostumes = state.cartCostumes.filter(
-          (costumeOnCart) => costumeOnCart.id !== state.activeCostumeOnCart.id
+    onDeleteProductOnCart: (state) => {
+        state.cartProducts = state.cartProducts.filter(
+          (productOnCart) => productOnCart.id !== state.activeProductOnCart.id
         );
-        state.activeCostumeOnCart = null;
-      
+        state.activeProductOnCart = {};
     },
-    onLoadCostumesOnCart: (state, { payload = [] }) => {
+    onLoadProductsOnCart: (state, { payload = [] }) => {
       // state.activeCourse = null;
-      state.isLoadingCostumesOnCart = false;
-      payload.forEach((costumeOnCart) => {
-        const exists = state.cartCostumes.some(
-          (dbCostume) => dbCostume.id === costumeOnCart.id
+      state.isLoadingProductsOnCart = false;
+      payload.forEach((productOnCart) => {
+        const exists = state.cartProducts.some(
+          (dbCostume) => dbCostume.id === productOnCart.id
         );
         if (!exists) {
-          state.cartCostumes.push(costumeOnCart);
+          state.cartProducts.push(productOnCart);
         }
       });
     },
-    onLogoutCostumesOnCart: (state) => {
-      (state.isLoadingCostumesOnCart = true),
-        (state.cartCostumes = []),
-        (state.activeCostumeOnCart = null);
+    onLogoutProductsOnCart: (state) => {
+      (state.isLoadingProductsOnCart = true),
+        (state.cartProducts = []),
+        (state.activeProductOnCart = {});
+    },
+    onUpdateProductQty: (state) => {
+      state.totalQty = state.cartProducts.map(objeto => objeto.qty);
+      // console.log(state.totalQty.reduce((summary, actualNumber) => summary + actualNumber, 0))
+      state.productsQty = state.totalQty.reduce((summary, actualNumber) => summary + actualNumber, 0)
     },
   },
 });
 
 export const {
-  onSetActiveCostumeOnCart,
-  onAddNewCostumeOnCart,
-  onUpdateCostumeOnCart,
-  onUpdateQtyCostumeOnCart,
-  onDeleteCostumeOnCart,
-  onLoadCostumesOnCart,
-  onLogoutCostumesOnCart,
+  onSetActiveProductOnCart,
+  onAddNewProductOnCart,
+  onUpdateProductOnCart,
+  onUpdateQtyProductsOnCart,
+  onDeleteProductOnCart,
+  onLoadProductsOnCart,
+  onLogoutProductsOnCart,
+  onUpdateProductQty,
 } = cartSlice.actions;

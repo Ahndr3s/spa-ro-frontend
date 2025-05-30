@@ -7,7 +7,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { Card } from "./Card";
 
-export const Slider = ({ type, cards, limit }) => {
+export const Slider = ({ type, cards, limit, cardType }) => {
   const [card, setcard] = useState(0);
   const [currentSlide, setcurrentSlide] = useState(0);
   const sliderRef = useRef(null);
@@ -58,7 +58,7 @@ export const Slider = ({ type, cards, limit }) => {
               <Card
                 id={card.id}
                 key={`t2${index}`}
-                type={Number(card.type)}
+                cardType={Number(cardType)}
                 title={card.title}
                 info={card.info}
                 img={card.img}
@@ -66,6 +66,8 @@ export const Slider = ({ type, cards, limit }) => {
                 size={card.size}
                 subtitle1={card.subtitle1}
                 subtitle2={card.subtitle2}
+                type={Number(card.type)}
+                category={card.category}
               />
             </div>
           ))}
@@ -103,14 +105,16 @@ export const Slider = ({ type, cards, limit }) => {
             <Card
             id={card.id}
             key={`t1${index}`}
-            type={Number(card.type)}
+            cardType={1}
             title={card.title}
             info={card.info}
             img={card.img}
             price={card.price}
             size={card.size}
-            subtitle1={card.subtitle1}
-            subtitle2={card.subtitle2}
+            category={card.category}
+            stock={card.stock}
+            type={Number(card.type)}
+            // subtitle2={card.subtitle2}
             />
           ))}
         </div>
@@ -130,4 +134,6 @@ Slider.propTypes = {
   type: PropTypes.number,
   limit: PropTypes.number,
   showSidePanel: PropTypes.bool,
+  cardType: PropTypes.number,
+  category: PropTypes.string,
 };

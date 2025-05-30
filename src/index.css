@@ -1,9 +1,13 @@
 body {
   margin: 0;
+  margin-top: 8vh; /* igual a la altura del navbar */
 }
 
 :root {
-  font-family: roboto, sans-serif, Inter, system-ui, Avenir, Helvetica, Arial;
+  /* font-family: roboto, sans-serif, Inter, system-ui, Avenir, Helvetica, Arial; */
+  /* font-family: "Open Sans", Arial, Helvetica, sans-serif; */
+  /* font-family: 'Montserrat', 'SUIT', sans-serif; */
+  font-family: 'Steelfish Bold', 'SUIT', sans-serif;
   font-weight: 400;
 
   font-synthesis: none;
@@ -16,6 +20,64 @@ body {
   --text-primary: rgba(255, 255, 255, 0.87);
   --transition-speed: 600ms;
 }
+
+.routes {
+  display: flex;
+  
+}
+
+/*----------------searchPanel styles starts----------------*/
+.searchPanel {
+  position: absolute;
+  top: 0;
+  background-color: #fff;
+  width: 100%;
+  max-width: 0; /* Para transiciones suaves */
+  height: calc(100vh - 45px);
+  opacity: 0; /* Oculto por defecto */
+  transform: scaleX(0); /* Escala para la animación */
+  transition: all 0.3s ease-in-out;
+  overflow: hidden;
+  z-index: 1000;
+  justify-content: flex-start;
+  align-content: center;
+  flex-direction: column;
+  flex-wrap: wrap;
+  display: flex; /* Siempre presente */
+}
+
+.searchPanel.active {
+  opacity: 1; /* Visible */
+  transform: scaleX(1); /* Expandir */
+  max-width: none; /* Tamaño deseado */
+  display: flex;
+  padding-top: 1rem;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.result-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.result-headers {
+  margin-bottom: 1rem;
+}
+
+.result-cards {
+  display: flex;
+  flex-direction: row;
+}
+
+.result-cards .product-card {
+  margin: 1rem;
+}
+/*----------------searchPanel styles ends----------------*/
 
 /*----------------Sidepanel styles starts----------------*/
 .sidepanel {
@@ -37,7 +99,7 @@ body {
 }
 
 .sidepanel-header-t1, .sidepanel-header-t2, .sidepanel-header-t3,
-.emptyMsg {
+.emptyMsg, .deletingMsg, .deletingBtns, .saleDetails {
   display: flex;
   color: #fff;
 }
@@ -47,9 +109,8 @@ body {
   justify-content: center;
 }
 
-/*----------------sidepanel T2 styles starts----------------*/
-
-.emptyMsg {
+/*----------------sidepanel T2 and T5 styles starts----------------*/
+.emptyMsg, .deletingMsg {
   font-size: x-large;
   text-align: center;
   margin-left: 3rem;
@@ -88,6 +149,37 @@ body {
 }
 /*----------------sidepanel T3 styles ends----------------*/
 
+/*----------------sidepanel T5 styles starts----------------*/
+.deletingMsg {
+  flex-direction: column;
+}
+
+.deletingBtns{
+  justify-content: space-evenly;
+}
+/*----------------sidepanel T5 styles ends----------------*/
+
+/*----------------sidepanel T6 styles starts----------------*/
+.saleDetails {
+  flex-direction: column;
+  font-size: large;
+  margin-left: 4rem;
+}
+
+.saleDetails-fields {
+  font-weight: bold;
+}
+
+.saleDetails-data {
+  font-weight: bolder;
+  color: #d1a2ea;
+}
+
+.saleDetails-prods {
+  margin-bottom: 6rem;
+}
+/*----------------sidepanel T6 styles ends----------------*/
+
 .sidepanel-footer {
   align-items: center;
   color: var(--text-primary);
@@ -122,15 +214,23 @@ body {
 }
 
 .resume-card-info {
+  display: flex;
+  flex-direction: column;
+  margin: 1rem;
   text-align: center;
   font-size: x-large;
   color: #fff;
+}
+
+.resume-card-info .product-res-title, .product-res-price {
+  margin: 0%;
 }
 
 .sizes-res-matrix {
   display: flex;
   flex-direction: row;
   justify-content: space-around;
+  flex-wrap: wrap;
 }
 
 .res-size-btn {
@@ -169,7 +269,7 @@ body {
 /*----------------product resume styles ends----------------*/
 
 /*----------------Cartbar styles starts----------------*/
-.cart-card-actions {
+.cart-  -actions {
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
@@ -245,23 +345,15 @@ body {
 .banner-card {
   position: relative;
   align-content: center;
-  width: max-content;
   height: 850px;
   border: double 2px transparent;
   border-radius: 10px;
-  background-image: linear-gradient(#601875, #102172),
-    linear-gradient(90deg, #650577, #f66c49, #f82f5c);
-  background-origin: border-box;
-  background-clip: content-box, border-box;
   animation: fadeIn 1s ease-out forwards;
+  background-size: cover;
+  background-size: cover;
+  align-self: center;
 }
 
-.banner-card-img {
-  align-self: center;
-  width: fit-content;
-  height: inherit;
-  border-radius: inherit;
-}
 
 .banner-card-info {
   display: flex;
@@ -300,24 +392,33 @@ body {
   width: 530px;
   height: 600px;
   margin-right: 7px;
+  margin-bottom: 2rem;
+}
+
+.primary-btn-drk, .serv-btn { 
+  height: 2rem;
+  width: fit-content;
+  border-radius: 40px;
+  border-style: solid;
+  justify-self: center;
+  font-size: large;
+  color: #fff;
 }
 
 .primary-btn-drk {
   background-image: linear-gradient(90deg, #000, #000);
   border-color: #fff;
-  color: #fff;
-  height: 2rem;
-  width: 8rem;
-  border-radius: 40px;
-  border-style: solid;
-  justify-self: center;
-  font-size: large;
 }
 
+.serv-btn {
+  background-image: linear-gradient(#f9acf2, #d1a2ea),
+    linear-gradient(90deg, #650577, #f66c49, #f82f5c);
+  color: linear-gradient(90deg, #650577, #f66c49, #f82f5c);
+}
 /*----------------Banner card styles Ends----------------*/
 
 /*----------------Cart card styles Starts----------------*/
-.cart-card {
+.cart-card, .sale-card {
   border: double 2px transparent;
   border-radius: 10px;
   display: flex;
@@ -333,7 +434,7 @@ body {
   width: 80px;
 }
 
-.cart-card-info {
+.cart-card-info, .sale-card-info {
   display: flex;
   flex-wrap: wrap;
   align-content: flex-end;
@@ -341,6 +442,14 @@ body {
   margin-top: 1px;
   margin-bottom: 1px;
   margin-left: 1rem;
+}
+/*----------------Cart card styles Ends----------------*/
+
+/*----------------Cart card styles Starts----------------*/
+.sale-card {
+  background-color: #d1a2ea;
+  margin-bottom: 1rem;
+  width: 16rem;
 }
 /*----------------Cart card styles Ends----------------*/
 
@@ -459,31 +568,43 @@ body {
 /*----------------Form styles stars----------------*/
 .simple-form {
   display: grid;
-}
-
-form input[type="text"],
-input[type="email"],
-input[type="password"],
-textarea {
-  width: 20%;
-  margin: 8px 0;
-  background-color: aliceblue;
-  color: black;
+  justify-content: center;
+  text-align: center;
+  justify-items: center;
 }
 
 form button {
   width: 5%;
   background-color: #102172;
+  margin-top: 1rem;
 }
 
 form input[type="text"],
+form input[type="number"],
 input[type="email"],
 input[type="password"],
-textarea {
+textarea,
+.form-sizes {
   box-sizing: border-box;
   border-radius: 7px;
   padding: 12px 20px;
+  margin-bottom: 1rem;
 }
+
+/*-------------------------Simple Form T2 Styles Starts--------------------------*/
+.txtbox-t3 {
+  width: 250px;
+}
+/*-------------------------Simple Form T2 Styles Ends--------------------------*/
+
+/*-------------------------Simple Form T5 Styles Starts--------------------------*/
+.search-form {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+/*-------------------------Simple Form T5 Styles Ends--------------------------*/
+
 /*----------------Form styles ends----------------*/
 
 /*-------------------------Responsive Styles Starts--------------------------*/
@@ -513,8 +634,16 @@ textarea {
     transition: width 0.3s ease-in-out;
   }
   /*----------------Responsive Sidepanel styles Ends----------------*/
+  
+  /*----------------Responsive Searchpanel styles Starts----------------*/
+    
+    .result-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+  /*----------------Responsive Searchpanel styles Ends----------------*/
 
-  /*----------------product resume styles starts----------------*/
+  /*----------------Product Resume styles starts----------------*/
   
   .product-resume-img {
     width: 300px;
@@ -528,7 +657,7 @@ textarea {
   .resume-footer {
     margin-top: 2rem;
   }
-  /*----------------Responsive product resume styles ends----------------*/
+  /*----------------Responsive Product Resume styles ends----------------*/
 
   /*----------------Responsive Product card styles Starts----------------*/
   
@@ -540,7 +669,7 @@ textarea {
 
   /*----------------Responsive Banner card styles Starts----------------*/
   .banner-card {
-    width: 385px;
+    width: 408px;
     height: 500px;
   }
 

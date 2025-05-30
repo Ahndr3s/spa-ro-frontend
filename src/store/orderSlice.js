@@ -4,8 +4,11 @@ export const orderSlice = createSlice({
   name: "order",
   initialState: {
     isLoadingOrders: true,
-    orderProducts: [],
-    activeOrder: null,
+    orders: [],
+    activeOrder: {
+      sellingProducts: [], // Asegúrate de que esto no sea undefined
+      subTotal: 0,
+    },
   },
   reducers: {
     onSetActiveOrder: (state, { payload }) => {

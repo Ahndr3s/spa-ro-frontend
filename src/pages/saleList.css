@@ -1,0 +1,22 @@
+.salesHistoric {
+  display: flex;
+  justify-content: center;
+}
+
+.sales-table {
+  border-collapse: collapse;
+}
+
+.sales-table th,
+.sales-table td {
+  width: 12rem;
+  text-align: center;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+}
+
+.sales-hd-row {
+  background-color: #f0f0f0;
+  font-weight: bold;
+
+}

@@ -1,13 +1,11 @@
+import { AuthProvider } from "./context"
 import { AppRouter } from "./router/AppRouter"
 
-
 function App() {
-  
-
   return (
-    <>
-      <AppRouter/>
-    </>
+    <AuthProvider>
+      <AppRouter className="ruotes"/>
+    </AuthProvider>
   )
 }
 

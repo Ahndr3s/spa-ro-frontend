@@ -1,6 +1,10 @@
 /*----------------Navbar styles stars----------------*/
 .navbar {
-  position: relative;
+  position: fixed; /* antes: relative */
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000; /* para que quede encima de otros elementos */
   background-color: var(--bg-primary);
   height: 8vh;
   transition: width 600ms ease;
@@ -47,14 +51,21 @@ li:last-of-type {
 }
 
 .navbar,
+.nav-item-userName,
 .navbar-nav {
   display: flex;
   flex-direction: row;
+  justify-content: center;
+  align-items: center;
 }
 
-.nav-item {
+.nav-item, .nav-item-userName {
   padding: 20px;
   width: fit-content;
+}
+
+.nav-item-userName{
+  color: #7268da;
 }
 
 .nav-link {
@@ -72,7 +83,7 @@ li:last-of-type {
 }
 
 .logo {
-  margin-top: auto;
+  /* margin-top: auto; */
 }
 
 .logo-img {
@@ -93,15 +104,32 @@ li:last-of-type {
   margin-right: 2rem;
 }
 
-.userName {
+.cart-container {
   display: flex;
-  align-items: center;
+  position: relative;
+  margin-right: auto;
+  flex-direction: row;
+  justify-content: flex-end;
 }
 
-/*----------------Navbar styles ends----------------*/
+.product-counter {
+  display: flex;
+  position: absolute;
+  top: 12px;
+  background-color: #7268da;
+  color: aliceblue;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 15px;
+  z-index: 1000;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}
+
+/*----------------Responsive Navbar starts----------------*/
 
 @media only screen and (max-width: 600px) {
-  /*-----Responsive Navbar starts-----*/
   .navbar-nav > .nav-item {
     display: none;
   }
