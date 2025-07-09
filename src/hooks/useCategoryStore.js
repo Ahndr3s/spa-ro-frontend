@@ -22,12 +22,12 @@ export const useCategoryStore = () => {
         // console.log(category)
         try {
             if(category.id){
-                console.log('voy a actualizar una categoria')
+                // console.log('voy a actualizar una categoria')
                 await roApi.put(`/api/categories/${category.id}`, category)
                 dispatch(onUpdateCategory(category))
                 return
             }
-            console.log('voy a crear una categoria')
+            // console.log('voy a crear una categoria')
             const {data} = await roApi.post(`/api/categories/`, category)
             dispatch(onAddNewCategory({...category, id:data.id, user}))
             // console.log(banner)

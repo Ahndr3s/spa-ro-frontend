@@ -5,18 +5,26 @@ export const saleSlice = createSlice({
   initialState: {
     isLoadingSales: true,
     checkSale: false,
+    setDate:false,
     sales: [],
     contact: {},
     activeSale: {},
+    mostSoldProduct: {},
+    mostSoldProductOfTheMonth: {},
   },
   reducers: {
     onSetActiveSale: (state, { payload }) => {
       state.activeSale = payload;
     },
     onCheckingSale: (state) => {
-        console.log("Previous checkSale:", state.checkSale); // Debug
-        state.checkSale = !state.checkSale;
-        console.log("Updated checkSale:", state.checkSale);
+      // console.log("Previous checkSale:", state.checkSale); // Debug
+      state.checkSale = !state.checkSale;
+      // console.log("Updated checkSale:", state.checkSale);
+    },
+    onSettiningDate: (state) => {
+      // console.log("Previous checkSale:", state.checkSale); // Debug
+      state.setDate = !state.setDate;
+      // console.log("Updated checkSale:", state.checkSale);
     },
     onCaptureContact: (state, { payload }) => {
       // state.contactStatus = "Captured";
@@ -54,6 +62,12 @@ export const saleSlice = createSlice({
         }
       });
     },
+    onSetMostSoldProduct: (state, { payload }) => {
+      state.mostSoldProduct = payload;
+    },
+    onSetMostSoldProductOfTheMonth: (state, { payload }) => {
+      state.mostSoldProductOfTheMonth = payload;
+    },
     onLogoutSales: (state) => {
       (state.isLoadingOrders = true),
         (state.orders = []),
@@ -64,8 +78,10 @@ export const saleSlice = createSlice({
 
 export const {
   onCheckingSale,
+  onSettiningDate,
   onCaptureContact,
   onSetActiveSale,
+  onSetMostSoldProduct,
   onAddNewSale,
   onUpdateSale,
   onDeleteSale,

@@ -45,86 +45,94 @@ export const Slider = ({ type, cards, limit, cardType }) => {
     cards = cards.slice(-limit);
   }
 
-  // AUTO BANNER SLIDER
-  if (type === 1) {
-    sliderOption = (
-      <div className="slider">
-        <div className="slides">
-          {cards.map((card, index) => (
-            <div
-              key={`Sidet2${index}`}
-              className={`slideT2 ${index === currentSlide ? "active" : ""}`}
-            >
-              <Card
-                id={card.id}
-                key={`t2${index}`}
-                cardType={Number(cardType)}
-                title={card.title}
-                info={card.info}
-                img={card.img}
-                price={card.prince}
-                size={card.size}
-                subtitle1={card.subtitle1}
-                subtitle2={card.subtitle2}
-                type={Number(card.type)}
-                category={card.category}
-              />
-            </div>
-          ))}
-        </div>
+  switch (type) {
+    // AUTO BANNER SLIDER
+    case 1:
+      sliderOption = (
+        <div className="slider">
+          <div className="slides">
+            {cards.map((card, index) => (
+              <div
+                key={`Sidet2${index}`}
+                className={`slideT2 ${index === currentSlide ? "active" : ""}`}
+              >
+                <Card
+                  id={card.id}
+                  key={`t2${index}`}
+                  cardType={Number(cardType)}
+                  title={card.title}
+                  info={card.info}
+                  img={card.img}
+                  price={card.prince}
+                  size={card.size}
+                  subtitle1={card.subtitle1}
+                  subtitle2={card.subtitle2}
+                  type={Number(card.type)}
+                  category={card.category}
+                />
+              </div>
+            ))}
+          </div>
 
-        {/* Puntos de navegación */}
-        <div className="dots">
-          {cards.map((_, index) => (
-            <span
-              key={index}
-              className={`dot ${index === currentSlide ? "active" : ""}`}
-              onClick={() => goToSlide(index)}
-            />
-          ))}
-        </div>
-        <style>{`
+          {/* Puntos de navegación */}
+          <div className="dots">
+            {cards.map((_, index) => (
+              <span
+                key={index}
+                className={`dot ${index === currentSlide ? "active" : ""}`}
+                onClick={() => goToSlide(index)}
+              />
+            ))}
+          </div>
+          <style>{`
           .slides {
             display: flex;
             transition: transform 0.5s ease-in-out;
             transform: translateX(-${currentSlide * 100}%);
         }
         `}</style>
-      </div>
-    );
-  } else if (type === 2) { // PRODUCT CARD SLIDER
-    sliderOption = (
-      <div className="slider-container">
-        <FontAwesomeIcon
-          className="slider-l-btn slider-btn"
-          icon={faCircleChevronLeft}
-          onClick={onPreviousClick}
-        />
-        <div ref={sliderRef} key={index} className="slide">
-          {cards.map((card, index) => (
-            <Card
-            id={card.id}
-            key={`t1${index}`}
-            cardType={1}
-            title={card.title}
-            info={card.info}
-            img={card.img}
-            price={card.price}
-            size={card.size}
-            category={card.category}
-            stock={card.stock}
-            type={Number(card.type)}
-            // subtitle2={card.subtitle2}
-            />
-          ))}
         </div>
-        <FontAwesomeIcon
-          className="slider-btn slider-r-btn"
-          icon={faCircleChevronRight}
-          onClick={onNextClick}
-        />
-      </div>
-    );
+      );
+      break;
+
+    // PRODUCT CARD SLIDER
+    case 2:
+      sliderOption = (
+        <div className="slider-container">
+          <FontAwesomeIcon
+            className="slider-l-btn slider-btn"
+            icon={faCircleChevronLeft}
+            onClick={onPreviousClick}
+          />
+          <div ref={sliderRef} key={index} className="slide">
+            {cards.map((card, index) => (
+              <Card
+                id={card.id}
+                key={`t1${index}`}
+                cardType={1}
+                title={card.title}
+                info={card.info}
+                img={card.img}
+                price={card.price}
+                size={card.size}
+                category={card.category}
+                stock={card.stock}
+                type={Number(card.type)}
+                // subtitle2={card.subtitle2}
+              />
+            ))}
+          </div>
+          <FontAwesomeIcon
+            className="slider-btn slider-r-btn"
+            icon={faCircleChevronRight}
+            onClick={onNextClick}
+          />
+        </div>
+      );
+      break;
+
+    default:
+      break;
   }
   return <>{sliderOption}</>;
 };

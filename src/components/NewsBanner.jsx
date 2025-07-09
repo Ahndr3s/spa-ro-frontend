@@ -23,12 +23,19 @@ export const NewsBanner = () => {
   const accesories = getContentsByType(products, "2");
   const { status } = useAuthStore();
 
+  // console.log(filtereBanners)
+
   useEffect(() => {
     startLoadingProducts();
-    startLoadingBanners()
-    startLoadingCategories()
-    startLoadingSales()
-  }, [startLoadingProducts, startLoadingBanners, startLoadingCategories, startLoadingSales]);
+    startLoadingBanners();
+    startLoadingCategories();
+    startLoadingSales();
+  }, [
+    startLoadingProducts,
+    startLoadingBanners,
+    startLoadingCategories,
+    startLoadingSales,
+  ]);
 
   const handleCreateProduct = () => {
     dispatch(toggleSidePanel());
@@ -49,7 +56,7 @@ export const NewsBanner = () => {
   return (
     <>
       {/* SLIDER DE BANNERS */}
-      <Slider type={1} cards={filtereBanners} limit={3} cardType={2}/>
+      <Slider type={1} cards={filtereBanners} limit={3} cardType={2} />
       {status === "Authenticated" && (
         <>
           <div className="crud-btn">
@@ -65,18 +72,30 @@ export const NewsBanner = () => {
           </div>
         </>
       )}
-      
+
       <h1>The Best Sellers</h1>
       <div className="best-seller-container">
         <div className="top1">
-          <ContentList contents={products} contentType="1" listType="1" limit={1} cardType={1}/>
+          <ContentList
+            contents={products}
+            contentType="1"
+            listType="1"
+            limit={1}
+            cardType={1}
+          />
         </div>
         <Slider type={2} cards={products} />
       </div>
       <h1>Accesorios</h1>
       <div className="best-seller-container">
         <div className="top1">
-          <ContentList contents={accesories} contentType="2" listType="1" limit={1} cardType={1}/>
+          <ContentList
+            contents={accesories}
+            contentType="2"
+            listType="1"
+            limit={1}
+            cardType={1}
+          />
         </div>
         <Slider type={2} cards={accesories} />
       </div>

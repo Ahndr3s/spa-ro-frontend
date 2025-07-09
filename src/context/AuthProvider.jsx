@@ -26,8 +26,8 @@ export const AuthProvider = ({ children }) => {
   // }, [status]);
   }, []);
 
-  const login = (data) => {
-    console.log(data)
+  // const login = (data) => {
+    // console.log(data)
     // const user = { id: "ABC", email: data.email, name: data.name };
 
     // const action = {
@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }) => {
     // localStorage.setItem('token-init-date', new Date().getTime())
 
     // dispatch(action);
-  };
+  // };
 
   const logout = () => {
     localStorage.clear("user");
@@ -54,7 +54,7 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider
       value={{
         ...authState,
-        login: login,
+        // login: login,
         logout: logout,
       }}
     >

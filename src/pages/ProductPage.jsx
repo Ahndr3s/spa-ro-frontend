@@ -16,6 +16,7 @@ export const ProductPage = () => {
   const { products, startLoadingProducts } = useProductStore();
   const { startSavingProductOnCart, startUpdatingProductQty } = useCartStore();
   const [sizesBtns, setSizeBtns] = useState([]);
+  const [highlightedPhoto, setHighlightedPhoto] = useState('');
   let content;
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -32,6 +33,7 @@ export const ProductPage = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    setHighlightedPhoto('')
   }, []);
 
   useEffect(() => {
@@ -72,34 +74,60 @@ export const ProductPage = () => {
     setSelectedSize(size);
   };
 
+  // ALLOWS THE USER TO CHOOSE THE SIZE OF THE PRODUCT
+  const handleChoosePhoto = (photo) => {
+    setHighlightedPhoto(photo);
+  };
+
   // ADDS A PRODUCT TO THE SHOPPING CART
   const handleAddOnCart = () => {
-    if (!updatedContent) {
+    if (content.size === "T" && !updatedContent) {
+      dispatch(toggleSidePanel());
+      startSavingProductOnCart(content);
+      startUpdatingProductQty();
+      navigate(`/home`, {
+        replace: true,
+      });
+    } else if (content.size !== "T" && updatedContent) {
+      dispatch(toggleSidePanel());
+      // console.dir(updatedContent);
+      startSavingProductOnCart(updatedContent);
+      startUpdatingProductQty();
+      navigate(`/home`, {
+        replace: true,
+      });
+    } else {
       Swal.fire("Error", "Elige un tamaño", "error");
       // console.error("No hay datos para agregar al carrito");
       return;
     }
-    dispatch(toggleSidePanel());
-    // console.dir(updatedContent);
-    startSavingProductOnCart(updatedContent);
-    startUpdatingProductQty();
-    navigate(`/home`, {
-      replace: true,
-    });
   };
 
   return (
     <>
       <div className="product-container">
-        <img className="product-card-img" src={content.img} />
+        <div className="prod-img-container">
+          <img className="product-card-img" src={(highlightedPhoto !== '' && content.img.length > 1) ? highlightedPhoto: content.img[0]} />
+          {content.img && content.img.length > 1 && (
+            <div className="prod-thumb-container">
+              {content.img.map((img, index) => (
+                <img
+                  onClick={() => handleChoosePhoto(img)}
+                  key={index}
+                  className="prod-thumb"
+                  src={img}
+                  alt={`Imagen ${index + 1}`}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+
         <div className="product-details">
           <h2>{content?.title}</h2>
           <h4>${content?.price}</h4>
           {content.type == 1 && (
             <>
-                {/* <Slider type={2} cards={products} limit={3} cardType={2} /> */}
-              <div className="tumb-prod-slider">
-              </div>
               <h4>Tamaños Disponibles</h4>
               <div className="sizes-matrix">
                 {sizesBtns.map((size) => (

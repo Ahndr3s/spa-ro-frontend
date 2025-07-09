@@ -21,12 +21,12 @@ export const useBannerStore = () => {
     const startSavingBanner = async(banner) => {
         try {
             if(banner.id){
-                console.log('Voy a actualizar')
+                // console.log('Voy a actualizar')
                 await roApi.put(`/api/banners/${banner.id}`, banner)
                 dispatch(onUpdateBanner(banner))
                 return
             }
-            console.log('Voy a crear')
+            // console.log('Voy a crear')
             // console.log(banner)
             const {data} = await roApi.post(`/api/banners/`, banner)
             dispatch(onAddNewBanner({...banner, id:data.event.id, user}))
@@ -49,7 +49,6 @@ export const useBannerStore = () => {
     const startLoadingBanners = async() => {
         try {
             const {data} = await roApi.get('/api/banners')
-            // console.dir(data)
             dispatch(onLoadBanners(data.banners))
         } catch (error) {
             console.log('Error loading banners')

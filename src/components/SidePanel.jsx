@@ -15,10 +15,15 @@ import {
   onSetActiveBanner,
 } from "../store/bannerSlice";
 import {
+  toggleCreativeCatMode,
   onSetActiveCategory,
   toggleDeletingCatMode,
 } from "../store/categorySlice";
-import { onCheckingSale } from "../store/saleSlice";
+import {
+  onCheckingSale,
+  onSetMostSoldProduct,
+  onSettiningDate,
+} from "../store/saleSlice";
 import { onLogoutProductsOnCart } from "../store/cartSlice";
 import { onSetActiveOrder } from "../store/orderSlice";
 import { useProductStore } from "../hooks/useProductStore";
@@ -26,10 +31,11 @@ import { useBannerStore } from "../hooks/useBannerStore";
 import { useCartStore } from "../hooks/useCartStore";
 import { useAuthStore } from "../hooks/useAuthStore";
 import { useSalesStore } from "../hooks/useSalesStore";
-import { toggleSidePanel } from "../store/interactivePanels";
 import { useCategoryStore } from "../hooks/useCategoryStore";
+import { toggleSidePanel } from "../store/interactivePanels";
 import { Card } from "./Card";
 import { SimpleForm } from "./SimpleForm";
+import { useForm } from "../hooks/useForm";
 import "../index.css";
 
 export const SidePanel = ({ panelType, infoType }) => {
@@ -38,18 +44,29 @@ export const SidePanel = ({ panelType, infoType }) => {
   const { activeProduct, startDeletingProduct } = useProductStore();
   const { activeBanner, startDeletingBanner } = useBannerStore();
   const { activeCategory, startDeletingCategory } = useCategoryStore();
-  const { activeSale, setActiveSale } = useSalesStore();
+  const {
+    activeSale,
+    setActiveSale,
+    setDate,
+    startLoadingMostSoldOfTheMonth,
+    mostSoldProduct,
+  } = useSalesStore();
   const { cartProducts } = useCartStore();
 
   const createProduct = useSelector((state) => state.product.createProduct);
   const createBanner = useSelector((state) => state.banner?.createBanner);
   const createCategory = useSelector((state) => state.category?.createCategory);
   const checkSale = useSelector((state) => state.sale.checkSale);
-  const isVisible = useSelector((state) => state.interactivePanels.sidePanelVisible);
+  const isVisible = useSelector(
+    (state) => state.interactivePanels.sidePanelVisible
+  );
 
   const navigate = useNavigate();
   const { status } = useAuthStore();
   const dispatch = useDispatch();
+  const dateField = { datePicker: "" };
+
+  const { datePicker, onInputChange: onDateInputChange } = useForm(dateField);
 
   // HIDES SIDEPANEL
   const handleSeeProductOnCart = () => {
@@ -60,11 +77,15 @@ export const SidePanel = ({ panelType, infoType }) => {
         dispatch(toggleCreateBannerMode());
         dispatch(onSetActiveBanner({}));
       } else if (createCategory || infoType === 3) {
-        dispatch(toggleCreateBannerMode());
-        dispatch(onSetActiveBanner({}));
+        dispatch(toggleCreativeCatMode());
+        dispatch(onSetActiveCategory({}));
       } else if (checkSale) {
         dispatch(onCheckingSale());
         setActiveSale({});
+      } else if (setDate) {
+        dispatch(onSettiningDate());
+      } else if (Object.keys(mostSoldProduct).length > 0) {
+        dispatch(onSetMostSoldProduct({}));
       }
     }
     dispatch(onSetActiveProduct({}));
@@ -97,20 +118,29 @@ export const SidePanel = ({ panelType, infoType }) => {
 
   // DELETES THE SELECTED PRODUCT
   const handleDeleteProduct = () => {
-    if (infoType !== "") startDeletingProduct();
-    else startDeletingBanner();
+    if (infoType !== "" || infoType !== null) {
+      startDeletingProduct();
+      dispatch(toggleDeletingProdMode());
+    } 
+    else console.log('No hay datos de producto que borrar')
   };
 
   // DELETES THE SELECTED BANNER
   const handleDeleteBanner = () => {
-    if (infoType !== "") startDeletingBanner();
-    else startDeletingBanner();
+    if (infoType !== "" || infoType !== null) {
+      startDeletingBanner();
+      dispatch(toggleDeletingBannerMode())
+    }
+    else console.log('No hay datos de banner que borrar')
   };
 
   // DELETES THE SELECTED CATEGORY
   const handleDeleteCategory = () => {
-    if (infoType !== "") startDeletingCategory();
-    else startDeletingCategory();
+    if (infoType !== "" || infoType !== null) {
+      startDeletingCategory();
+      dispatch(toggleDeletingCatMode())
+    }
+    else console.log('No hay datos de vategoria que borrar');
   };
 
   // LEADS TO checkoutPage PASSING THE cartProducts and subTotal VALUES
@@ -135,6 +165,18 @@ export const SidePanel = ({ panelType, infoType }) => {
     setSubtotal(total);
   }, [cartProducts]);
 
+  const handlePickDate = (e) => {
+    if (e.keyCode === 13 && !e.shiftKey) {
+      // Convertir YYYY-MM-DD a DD/MM/YYYY
+      if (datePicker) {
+        startLoadingMostSoldOfTheMonth(datePicker);
+        dispatch(onSettiningDate());
+        // dispatch(onSetActiveProduct(mostSoldProduct))
+        // console.log(typeof(datePicker)+' '+ datePicker);
+      }
+    }
+  };
+
   switch (panelType) {
     // CART PRODUCT LIST
     case 1:
@@ -143,7 +185,7 @@ export const SidePanel = ({ panelType, infoType }) => {
           <div className="sidepanel-header-t1">
             <h3>Mi Carrito</h3>
           </div>
-          <ul>
+          <ul className="products-onCart">
             <li className="nav-item" onClick={handleSeeProductOnCart}>
               {cartProducts.map((card, index) => (
                 <Card
@@ -188,7 +230,13 @@ export const SidePanel = ({ panelType, infoType }) => {
       panelOption = (
         <div className={`sidepanel ${isVisible ? "active" : ""}`}>
           <div className="sidepanel-header-t3">
-            <h3>Agregar al Carrito</h3>
+            {setDate ? (
+              <h3>Elige una Fecha</h3>
+            ) : Object.keys(activeProduct).length > 0 ? (
+              <h3>Agregar al Carrito</h3>
+            ) : (
+              Object.keys(mostSoldProduct).length > 0 && <h3>Producto Más Vendido del Mes</h3>
+            )}
             <div className="x-contain" onClick={handleSeeProductOnCart}>
               <FontAwesomeIcon
                 icon={faXmark}
@@ -197,17 +245,39 @@ export const SidePanel = ({ panelType, infoType }) => {
               />
             </div>
           </div>
-          <Card
-            cardType={4}
-            id={activeProduct.id}
-            title={activeProduct.title}
-            info={activeProduct.info}
-            img={activeProduct.img}
-            price={activeProduct.price}
-            size={activeProduct.size}
-            stock={activeProduct.stock}
-            type={activeProduct.type}
-          />
+          {Object.keys(activeProduct).length > 0 ? (
+            <Card
+              cardType={4}
+              id={activeProduct.id}
+              title={activeProduct.title}
+              info={activeProduct.info}
+              img={activeProduct.img}
+              price={activeProduct.price}
+              size={activeProduct.size}
+              stock={activeProduct.stock}
+              type={activeProduct.type}
+            />
+          ) : Object.keys(mostSoldProduct).length > 0 ? (
+            <Card
+              cardType={8}
+              id={mostSoldProduct.id}
+              title={mostSoldProduct.title}
+              info={mostSoldProduct.info}
+              img={mostSoldProduct.img}
+              price={mostSoldProduct.price}
+              // stock={activeProduct.stock}
+              type={mostSoldProduct.type}
+            />
+          ) : (
+            <input
+              type="date"
+              name="datePicker"
+              placeholder="Fecha de vta"
+              value={datePicker || ""}
+              onChange={onDateInputChange}
+              onKeyDown={(e) => handlePickDate(e, datePicker)}
+            />
+          )}
         </div>
       );
       break;
@@ -337,8 +407,7 @@ export const SidePanel = ({ panelType, infoType }) => {
               Id: <em className="saleDetails-data">{activeSale.id}</em>
             </div>
             <div className="saleDetails-fields">
-              Fecha:{" "}
-              <em className="saleDetails-data">{activeSale.saleDate}</em>
+              Fecha: <em className="saleDetails-data">{activeSale.saleDate}</em>
             </div>
             <div className="saleDetails-fields">
               Cliente:{" "}
@@ -350,34 +419,43 @@ export const SidePanel = ({ panelType, infoType }) => {
             </div>
             <div className="saleDetails-fields">
               Dirección:{" "}
-              <em className="saleDetails-data">
-                {activeSale.contactAddress}
-              </em>
+              <em className="saleDetails-data">{activeSale.contactAddress}</em>
             </div>
-            <ul className="saleDetails-prods" style={{marginBottom:'6rem'}}>
-              <li className="nav-item" onClick={handleSeeProductOnCart}>
-                {activeSale.sellingProducts.map((card, index) => (
-                  <Card
-                    id={card.id}
-                    key={`t1${index}`}
-                    cardType={3}
-                    title={card.title}
-                    img={card.img}
-                    price={card.price}
-                    size={card.size}
-                    qty={card.qty}
-                  />
-                ))}
-              </li>
-            </ul>
+            <div className="saleList-header">
+              <h4>Productos Vendidos</h4>
+              <hr />
+            </div>
+            <div className="saleList-container">
+              <ul
+                className="saleDetails-prods"
+                style={{ marginBottom: "6rem" }}
+              >
+                <li className="nav-item" onClick={handleSeeProductOnCart}>
+                  {activeSale.sellingProducts.map((card, index) => (
+                    <Card
+                      id={card.id}
+                      key={`t1${index}`}
+                      cardType={7}
+                      title={card.title}
+                      img={card.img}
+                      price={card.price}
+                      size={card.size}
+                      qty={card.qty}
+                    />
+                  ))}
+                </li>
+              </ul>
+            </div>
             <div className="saleDetails-fields">
-              SubTotal: <em className="saleDetails-data">${activeSale.subTotal}</em>
+              SubTotal:{" "}
+              <em className="saleDetails-data">${activeSale.subTotal}</em>
             </div>
             <div className="saleDetails-fields">
               IVA: <em className="saleDetails-data">${activeSale.iva}</em>
             </div>
             <div className="saleDetails-fields">
-              Tarifa de envio: <em className="saleDetails-data">${activeSale.regTariff}</em>
+              Tarifa de envio:{" "}
+              <em className="saleDetails-data">${activeSale.regTariff}</em>
             </div>
             <div className="saleDetails-fields">
               Total: <em className="saleDetails-data">${activeSale.total}</em>

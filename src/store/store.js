@@ -5,8 +5,6 @@ import { bannerSlice } from './bannerSlice';
 import { orderSlice } from "./orderSlice";
 import { cartSlice } from './cartSlice';
 import { categorySlice } from './categorySlice';
-import { sidePanelSlice } from './SidePanelSlice';
-import { searchPanelSlice } from './searchPanelSlice';
 import { interactivePanelSlice } from './interactivePanels';
 import { saleSlice } from './saleSlice';
 
@@ -19,8 +17,6 @@ export default configureStore({
       order: orderSlice.reducer,
       productOnCart: cartSlice.reducer,
       category: categorySlice.reducer,
-      sidePanel: sidePanelSlice.reducer,
-      searchPanel: searchPanelSlice.reducer,
       interactivePanels: interactivePanelSlice.reducer,
       sale: saleSlice.reducer,
     },

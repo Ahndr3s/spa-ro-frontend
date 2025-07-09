@@ -6,7 +6,6 @@ import { useCategoryStore } from "../hooks/useCategoryStore";
 import { useForm } from "../hooks/useForm";
 import "./CollectionsStyles.css";
 
-
 export const Collections = () => {
   const { products } = useProductStore();
   const { categories } = useCategoryStore();

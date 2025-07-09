@@ -1,15 +1,15 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
 import PropTypes from "prop-types";
+import Swal from "sweetalert2";
 import { useForm } from "../hooks/useForm";
 import { useProductStore } from "../hooks/useProductStore";
 import { useCategoryStore } from "../hooks/useCategoryStore";
 import { useBannerStore } from "../hooks/useBannerStore";
 import { useAuthStore } from "../hooks/useAuthStore";
 import { useSalesStore } from "../hooks/useSalesStore";
-import { toggleSidePanel } from "../store/SidePanelSlice";
+import { toggleSidePanel } from "../store/interactivePanels";
 import {
   onSetActiveProduct,
   toggleCreativeProdMode,
@@ -23,6 +23,7 @@ import {
   toggleCreativeCatMode,
 } from "../store/categorySlice";
 import { getContentsByType } from "../helpers/getContents";
+// import roApi from "../api/roApi";
 
 // LOGIN FORM FIELDS DEFINITION
 const loginFormFields = {
@@ -63,7 +64,7 @@ const productFormFields = (info) => ({
   productPrice: info?.price || "0",
   productInfo: info?.info || "",
   productStock: info?.stock || "",
-  productImage: info?.img || "",
+  productImage: info?.img || [],
 });
 
 // BANNER FORM FIELDS DEFINITION
@@ -95,38 +96,38 @@ export const SimpleForm = (props) => {
   const loadedCategories = getContentsByType(categories, "3");
   // console.log(loadedCategories);
   const states = [
-    {name:"Aguascalientes",       tariff: 'AGS.100'},
-    {name:"Baja California",      tariff: 'BC.100'},
-    {name:"Baja California Sur",  tariff: 'BCS.100'},
-    {name:"Campeche",             tariff: 'CAM.100'},
-    {name:"Coahuila",             tariff: 'COA.100'},
-    {name:"Colima",               tariff: 'COL.100'},
-    {name:"Chiapas",              tariff: 'CHP.100'},
-    {name:"Chihuahua",            tariff: 'CHH.100'},
-    {name:"Ciudad de México",     tariff: 'CDMX.100'},
-    {name:"Durango",              tariff: 'DUR.100'},
-    {name:"Guanajuato",           tariff: 'GUA.100'},
-    {name:"Guerrero",             tariff: 'GRO.100'},
-    {name:"Hidalgo",              tariff: 'HID.100'},
-    {name:"Jalisco",              tariff: 'JAL.100'},
-    {name:"México",               tariff: 'MEX.100'},
-    {name:"Michoacán",            tariff: 'MIC.100'},
-    {name:"Morelos",              tariff: 'MOR.100'},
-    {name:"Nayarit",              tariff: 'NAY.100'},
-    {name:"Nuevo León",           tariff: 'NL.100'},
-    {name:"Oaxaca",               tariff: 'OAX.100'},
-    {name:"Puebla",               tariff: 'PUE.100'},
-    {name:"Querétaro",            tariff: 'QUE.100'},
-    {name:"Quintana Roo",         tariff: 'ROO.100'},
-    {name:"San Luis Potosí",      tariff: 'SLP.100'},
-    {name:"Sinaloa",              tariff: 'SIN.100'},
-    {name:"Sonora",               tariff: 'SON.100'},
-    {name:"Tabasco",              tariff: 'TAB.100'},
-    {name:"Tamaulipas",           tariff: 'TAM.100'},
-    {name:"Tlaxcala",             tariff: 'TLX.100'},
-    {name:"Veracruz",             tariff: 'VER.100'},
-    {name:"Yucatán",              tariff: 'YUC.100'},
-    {name:"Zacatecas",            tariff: 'ZAC.100'},
+    { name: "Aguascalientes", tariff: "AGS.100" },
+    { name: "Baja California", tariff: "BC.100" },
+    { name: "Baja California Sur", tariff: "BCS.100" },
+    { name: "Campeche", tariff: "CAM.100" },
+    { name: "Coahuila", tariff: "COA.100" },
+    { name: "Colima", tariff: "COL.100" },
+    { name: "Chiapas", tariff: "CHP.100" },
+    { name: "Chihuahua", tariff: "CHH.100" },
+    { name: "Ciudad de México", tariff: "CDMX.100" },
+    { name: "Durango", tariff: "DUR.100" },
+    { name: "Guanajuato", tariff: "GUA.100" },
+    { name: "Guerrero", tariff: "GRO.100" },
+    { name: "Hidalgo", tariff: "HID.100" },
+    { name: "Jalisco", tariff: "JAL.100" },
+    { name: "México", tariff: "MEX.100" },
+    { name: "Michoacán", tariff: "MIC.100" },
+    { name: "Morelos", tariff: "MOR.100" },
+    { name: "Nayarit", tariff: "NAY.100" },
+    { name: "Nuevo León", tariff: "NL.100" },
+    { name: "Oaxaca", tariff: "OAX.100" },
+    { name: "Puebla", tariff: "PUE.100" },
+    { name: "Querétaro", tariff: "QUE.100" },
+    { name: "Quintana Roo", tariff: "ROO.100" },
+    { name: "San Luis Potosí", tariff: "SLP.100" },
+    { name: "Sinaloa", tariff: "SIN.100" },
+    { name: "Sonora", tariff: "SON.100" },
+    { name: "Tabasco", tariff: "TAB.100" },
+    { name: "Tamaulipas", tariff: "TAM.100" },
+    { name: "Tlaxcala", tariff: "TLX.100" },
+    { name: "Veracruz", tariff: "VER.100" },
+    { name: "Yucatán", tariff: "YUC.100" },
+    { name: "Zacatecas", tariff: "ZAC.100" },
   ];
 
   const { user } = useSelector((state) => state.auth);
@@ -150,56 +151,65 @@ export const SimpleForm = (props) => {
   const handleImageChange = async (
     e,
     type,
-    currentImage = "",
+    currentImages = [],
     ContentOwner
   ) => {
-    const files = e.target.files;
-    const data = new FormData();
-    data.append("file", files[0]);
-    data.append("upload_preset", "fz466asa");
+    const files = Array.from(e.target.files);
+    let collection, linkParts;
+
+    // if (files.length + currentImages.length > 2) {
+    if (files.length > 2) {
+      alert("Solo puedes subir hasta 2 imágenes.");
+      return;
+    }
+
+    // Nombre de la carpeta en Cloudinary
+    if (currentImages.length === 0) {
+      // console.log('NO hay imagen previa')
+      collection =
+        type === "1" ? "costumes" : type === "2" ? "accessories" : "banners";
+    } else {
+      // console.log('hay imagen previa')
+      // console.log(currentImages)
+      linkParts = currentImages[0].split("/");
+      collection = linkParts[linkParts.length - 2];
+    }
 
     try {
-      // Si hay una imagen actual, elimínala llamando al backend
-      if (currentImage) {
-        // Obtener el public_id de la URL de la imagen
-        const publicId = currentImage.split("/").pop().split(".")[0];
+      // clonamos lo que ya está
+      // const uploadedUrls = [...currentImages];
+      const uploadedUrls = [];
 
-        // const collection = props.info.type === 1 ? "products" : "accesories";
-        const collection =
-          props.info.type === 1
-            ? "products"
-            : props.info.type === 2
-            ? "accesories"
-            : "banners";
-
-        console.log(collection + " " + publicId);
-        // const deleteResponse = await roApi.delete(
-        //   `/api/uploads/${collection}/${publicId}`
-        // );
-
-        // Axios devuelve un código de estado para comprobar si la respuesta es exitosa
-        // if (deleteResponse.status !== 200) {
-        //   throw new Error("Error deleting the current image");
-        // }
+      for (let file of files) {
+        const data = new FormData();
+        data.append("file", file);
+        data.append("upload_preset", "fz466asa");
+        data.append("folder", `ServerNode/${collection}`);
+        
+        if (ContentOwner === user.uuid) {
+          const response = await fetch(
+            `https://api.cloudinary.com/v1_1/dfpbzr7n0/image/upload`,
+            {
+              method: "POST",
+              body: data,
+            }
+          );
+          
+        const result = await response.json();
+        uploadedUrls.push(result.secure_url);
       }
 
-      // Subir la nueva imagen
-      if (ContentOwner === user.uuid) {
-        const response = await fetch(
-          `https://api.cloudinary.com/v1_1/dfpbzr7n0/image/upload`,
-          {
-            method: "POST",
-            body: data,
-          }
-        );
-        const file = await response.json();
-
-        setFormState((prevState) => ({
-          ...prevState,
-          [type === "product" ? "productImage" : "bannerImage"]:
-            file.secure_url,
-        }));
-      }
+      setFormState((prevState) => ({
+        ...prevState,
+        // productImages: uploadedUrls,
+        [type === "1" ||
+        collection === "costumes" ||
+        type === "2" ||
+        collection === "accessories"
+          ? "productImage"
+          : "bannerImage"]: uploadedUrls,
+      }));
+    }
     } catch (error) {
       console.error("Error uploading image", error);
     }
@@ -286,7 +296,7 @@ export const SimpleForm = (props) => {
 
     if (Object.values(contactFormData).every((value) => value !== "")) {
       dispatch(startCapturingContact(contactFormData));
-      console.log(contactFormData);
+      // console.log(contactFormData);
       return true;
     } else {
       Swal.fire(
@@ -337,6 +347,10 @@ export const SimpleForm = (props) => {
   // TRIGGERS startSaving REQUEST EITHER TO CREATE/EDIT A BANNER
   const handleBannerSubmit = async (e) => {
     e.preventDefault();
+        if (formState.bannerCategory === "") {
+      Swal.fire("Error en registro", "Por favor elige una Categoria", "error");
+      return;
+    }
 
     let bannerFormData = {
       type: formState.bannerType,
@@ -566,17 +580,26 @@ export const SimpleForm = (props) => {
             id="productImage"
             name="productImage"
             accept="image/*"
+            multiple
             onChange={(e) =>
               // console.log(props.info)
               // handleImageChange(e, "course", formState.courseImage, props.info.user._id)
-              handleImageChange(e, "product", formState.productImage, user.uuid)
+              handleImageChange(
+                e,
+                formState.productType,
+                formState.productImage,
+                user.uuid
+              )
             }
           />
-          <img
-            style={{ height: "250px", width: "250px" }}
-            src={formState.productImage}
-            alt=""
-          />
+          {formState.productImage.map((img, index) => (
+            <img
+              key={index}
+              style={{ height: "50px", width: "50px", marginRight: "10px" }}
+              src={img}
+              alt={`Imagen ${index + 1}`}
+            />
+          ))}
 
           <input className="primary-btn-drk" type="submit" value="Guardar" />
         </form>
@@ -697,18 +720,22 @@ export const SimpleForm = (props) => {
           <div className="select-container">
             <h4>Categoría de Producto</h4>
             <select
-              name="bannerCategory"
-              id="Bannercategories"
-              className="form-sizes"
-              onChange={onSelectChange}
-              value={formState.bannerCategory || categories[0]?.id || ""}
-            >
-              {categories.map((category) => (
-                <option key={`opt${category.title}`} value={category.id}>
-                  {category.title}
-                </option>
-              ))}
-            </select>
+            name="bannerCategory"
+            id="Bannercategories"
+            className="form-sizes"
+            onChange={onSelectChange}
+            // value={formState.productCategory || loadedCategories[0]?.id}
+            value={formState.bannerCategory || ""}
+          >
+            <option key={`opt0`} value={""}>
+              seleccione la Categoria
+            </option>
+            {categories.map((category) => (
+              <option key={`opt${category.title}`} value={category.id}>
+                {category.title}
+              </option>
+            ))}
+          </select>
           </div>
           <label htmlFor={formState.bannerImage}>Elige una imagen:</label>
           <input

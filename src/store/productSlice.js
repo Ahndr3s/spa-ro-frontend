@@ -14,14 +14,14 @@ export const productSlice = createSlice({
       state.activeProduct = payload || {};
     },
     toggleCreativeProdMode: (state) => {
-      console.log("Previous createProduct:", state.createProduct); // Debug
+      // console.log("Previous createProduct:", state.createProduct); // Debug
       state.createProduct = !state.createProduct;
-      console.log("Updated createProduct:", state.createProduct);
+      // console.log("Updated createProduct:", state.createProduct);
     },
     toggleDeletingProdMode: (state) => {
-      console.log("Previous DeletingProdMode:", state.deleteProduct); // Debug
+      // console.log("Previous DeletingProdMode:", state.deleteProduct); // Debug
       state.deleteProduct = !state.deleteProduct;
-      console.log("Updated DeletingProdMode:", state.deleteProduct);
+      // console.log("Updated DeletingProdMode:", state.deleteProduct);
     },
     onAddNewProduct: (state, { payload }) => {
       state.products.push(payload);

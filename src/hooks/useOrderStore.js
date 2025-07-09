@@ -21,35 +21,14 @@ export const useOrderStore = () => {
   };
 
   // SAVES THE RECORD OF THE SALE ON THE orders ARRAY
-  // const startSavingOrder = async (order) => {
-  //   // console.log(order)
-  //   try {
-  //     if (order.id !== undefined) {
-  //       console.log("Update order");
-  //       // console.log(order)
-  //       await roApi.put(`/api/payments/${order.id}`, order);
-  //       dispatch(onUpdateOrder(order));
-  //       return;
-  //     }
-  //     console.log("Create order");
-  //     console.log(order)
-  //     // const { data } = await roApi.post("/api/payments", order);
-  //     await roApi.post("/api/payments", order);
-  //     // dispatch(onAddNewOrder({ ...order, id: data.event.id, user }));
-  //   } catch (error) {
-  //     console.log(error);
-  //     Swal.fire("Error at saving", error.response.data.msg, "error");
-  //   }
-  // };
-
   const startSavingOrder = async (order) => {
     try {
       let response;
       if (order.id !== undefined) {
-        console.log("Update order");
+        // console.log("Update order");
         response = await roApi.put(`/api/payments/${order.id}`, { order });
       } else {
-        console.log("Create order");
+        // console.log("Create order");
         response = await roApi.post("/api/payments/", { order });
         // console.log(typeof(order))
       }
@@ -84,7 +63,7 @@ export const useOrderStore = () => {
 
   const startApprovingOrder = async ({ orderID, accessToken }) => {
     try {
-      console.log("Capturando orden con ID:", orderID);
+      // console.log("Capturando orden con ID:", orderID);
 
       // Sistema de recuperación de token en capas
       const token =
@@ -101,7 +80,7 @@ export const useOrderStore = () => {
         accessToken: token,
       });
 
-      console.log("Orden aprobada:", response.data);
+      // console.log("Orden aprobada:", response.data);
       return response.data;
       //CODE HERE TO STORE CONATCT FORM DATA
     } catch (error) {

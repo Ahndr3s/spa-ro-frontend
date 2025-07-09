@@ -144,14 +144,14 @@ export const CheckoutPage = () => {
             <div className="sidepanel-header-t1">
               <h2>Resumen de Orden</h2>
             </div>
-            <ul>
+            <ul style={{listStyle:"none"}}>
               <li className="nav-item">
                 {activeOrder?.sellingProducts?.length > 0 ? (
                   activeOrder.sellingProducts.map((card, index) => (
                     <Card
                       id={card.id}
                       key={`t1${index}`}
-                      cardType={3}
+                      cardType={7}
                       title={card.title}
                       img={card.img}
                       price={card.price}

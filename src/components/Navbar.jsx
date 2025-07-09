@@ -45,7 +45,7 @@ export const Navbar = () => {
   const { activeBanner } = useBannerStore();
   const { activeCategory } = useCategoryStore();
   const { cartProducts, productsQty } = useCartStore();
-  const { activeSale } = useSalesStore();
+  const { activeSale, setDate, mostSoldProduct } = useSalesStore();
 
   // SHOWS/HIDES THE NAVBAR
   const handleShowNavbar = () => {
@@ -61,9 +61,9 @@ export const Navbar = () => {
   const handleShowSidePanel = () => {
     if (showNavbar) setShowNavbar(false); // Cierra la navbar si está abierta
     if (isSearchPanelVisible) dispatch(toggleSearchPanel()); // Cierra el SearchPanel
-    console.log("Antes de toggle:", isSidePanelVisible);
+    // console.log("Antes de toggle:", isSidePanelVisible);
     dispatch(toggleSidePanel());
-    console.log("Después de toggle:", isSidePanelVisible);
+    // console.log("Después de toggle:", isSidePanelVisible);
   };
 
   // SHOWS/HIDES THE SEARCHPANEL
@@ -93,7 +93,8 @@ export const Navbar = () => {
       !createCategory &&
       !deleteCategory &&
       !checkSale &&
-      Object.keys(activeProduct).length > 0
+      Object.keys(activeProduct).length > 0 ||
+      setDate || Object.keys(mostSoldProduct).length > 0
     )
       return 3; // RESUME PRODUCT
     if (
@@ -124,7 +125,7 @@ export const Navbar = () => {
 
   const defineInfoType = () => {
     // activeProduct !== null ? 1 : activeBanner !== null ? 2 : null;
-    Object.keys(activeProduct).length > 0
+    Object.keys(activeProduct).length > 0 || Object.keys(mostSoldProduct).length > 0
       ? 1
       : Object.keys(activeBanner).length > 0
       ? 2
@@ -170,11 +171,6 @@ export const Navbar = () => {
                 <span className="link-text">Sobre Nosotros</span>
               </NavLink>
             </li>
-            {/* <li className="nav-item" onClick={handleShowNavbar}>
-              <NavLink className={"nav-link"} to={"/contact"}>
-                <span className="link-text">Contáctanos</span>
-              </NavLink>
-            </li> */}
             {status === "Authenticated" && (
               <>
                 <li className="nav-item" onClick={handleShowNavbar}>

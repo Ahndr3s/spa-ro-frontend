@@ -1,33 +1,37 @@
 import { useDispatch, useSelector } from "react-redux";
 import roApi from "../api/roApi";
 import Swal from "sweetalert2";
-import { format } from "date-fns";
-// import { onCaptureContact, onSetActiveSale, onDeleteSale, onLoadSales } from "../store/saleSlice";
+// import { format } from "date-fns";
 import {
   onSetActiveSale,
   onCaptureContact,
   onDeleteSale,
   onLoadSales,
+  onSetMostSoldProduct,
 } from "../store/saleSlice";
 
 export const useSalesStore = () => {
   // const { contacts, activeContact } = useSelector((state) => state.contact);
-  const formatedDate = format(Date.now(), "dd/MM/yyyy");
-  const { contact, sales, activeSale } = useSelector((state) => state.sale);
+  // const formatedDate = format(Date.now(), "dd/MM/yyyy");
+  const formatedDate = new Date();
+  const { contact, sales, activeSale, setDate, mostSoldProduct, mostSoldProductOfTheMonth } = useSelector(
+    (state) => state.sale
+  );
   const dispatch = useDispatch();
 
+  // CHANGES THE STATE OF CAPTURING THE CONTACT FORM
   const startCapturingContact = (contact) => {
     dispatch(onCaptureContact(contact));
   };
 
+  // ALLOWS US TO SEE THE SALE'S DEATAILS
   const setActiveSale = (sale) => {
     dispatch(onSetActiveSale(sale));
   };
 
-  // const startSavingSale = async (order, contactData, subTotal, products) => {
+  // TRIGGERS THE REQUEST TO REGISTER AND UPDATE A SALE RECORD
   const startSavingSale = async (contactData, activeOrder) => {
-
-    const reg = contact.region.split('.')
+    const reg = contact.region.split(".");
     const sale = {
       type: contactData.type,
       saleDate: formatedDate,
@@ -36,25 +40,25 @@ export const useSalesStore = () => {
       sellingProducts: activeOrder.sellingProducts,
       contactAddress: `${contact.address} ${contact.zipCode} ${contact.city} ${reg[0]}`,
       subTotal: parseFloat(activeOrder.subTotal),
-      // contactReg: reg, 
-      contactReg: reg[0], 
+      // contactReg: reg,
+      contactReg: reg[0],
       regTariff: parseFloat(reg[1]),
       // user: contact.user
     };
-    console.log("----------------THE REAL SALE----------------");
-    console.log(sale);
-    console.log("--------------------------------");
+    // console.log("----------------THE REAL SALE----------------");
+    // console.log(sale);
+    // console.log("--------------------------------");
     // console.log(sale.subTotal+' '+typeof(sale.subTotal));
     // console.log(sale.regTariff+' '+typeof(sale.regTariff));
-    
+
     try {
       let response;
       // if (sale.id !== undefined) {
       //   console.log("Update sale");
       //   response = await roApi.put(`/api/payments/${sale.id}`, { sale });
       // } else {
-        console.log("Create sale");
-        response = await roApi.post("/api/sales/",  sale);
+      // console.log("Create sale");
+      response = await roApi.post("/api/sales/", sale);
       // }
 
       return response.data; // Asegurar que devuelve orderId
@@ -68,17 +72,22 @@ export const useSalesStore = () => {
     }
   };
 
+  // TRIGGERS THE REQUEST TO GET ALL THE SALES RECORDS
   const startLoadingSales = async () => {
     try {
-      const { data } = await roApi.get("/api/sales/");
-      // console.dir(data)
-      dispatch(onLoadSales(data.sales));
+      // const { data } = await roApi.get("/api/sales/");
+      const { data } = await roApi.get("/api/sales/summary/salesOfTheMonth/");
+      console.dir('consegui esto')
+      console.dir(data)
+      // dispatch(onLoadSales(data.sales));
+      dispatch(onLoadSales(data));
     } catch (error) {
       console.log("Error loading sales");
       console.log(error);
     }
   };
 
+  // TRIGGERS THE REQUEST TO DELETE A SALE RECORD
   const startDeletingSale = async () => {
     try {
       await roApi.delete(`api/payments/${activeSale.id}`);
@@ -89,11 +98,40 @@ export const useSalesStore = () => {
     }
   };
 
+// ------------------------ANALYICS REQUESTS---------------------------------
+
+  // TRIGGERS THE REQUEST TO GET THE MOST SOLD PRODUCT OF THE COLLECTION
+  const startLoadingMostSold = async () => {
+    console.log('Herramienta 1')
+    // try {
+    //   const { data } = await roApi.get(`/api/sales/summary/mostSold`);
+    //   dispatch(onSetMostSoldProduct(data));
+    //   console.log(mostSoldProduct)
+    // } catch (error) {
+    //   console.error("Error fetching the most sold product");
+    // }
+  };
+
+  // TRIGGERS THE REQUEST TO GET THE MONTH'S MOST SOLD PRODUCT
+  const startLoadingMostSoldOfTheMonth = async (inputDate) => {
+    // console.log('Herramienta 2')
+    try {
+      const { data } = await roApi.get(`/api/sales/summary/mostSoldOfTheMonth/${inputDate}`);
+      dispatch(onSetMostSoldProduct(data[0]));
+      console.log(mostSoldProduct)
+    } catch (error) {
+      console.error("Error fetching the most sold product of the month");
+    }
+  };
+
   return {
     // PROPERTIES
     activeSale,
     sales,
     contact,
+    mostSoldProduct,
+    mostSoldProductOfTheMonth,
+    setDate,
 
     hasSaleSelected: !!activeSale,
 
@@ -103,5 +141,7 @@ export const useSalesStore = () => {
     startLoadingSales,
     startDeletingSale,
     startCapturingContact,
+    startLoadingMostSold,
+    startLoadingMostSoldOfTheMonth,
   };
 };

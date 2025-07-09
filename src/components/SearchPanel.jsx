@@ -15,13 +15,15 @@ export const SearchPanel = () => {
   const isSearchPanelVisible = useSelector(
     (state) => state.interactivePanels.searchPanelVisible
   );
+
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
   const { products } = useProductStore();
   const { q = "" } = queryString.parse(location.search);
   const searches = getContentByName(q, products);
-  const { searchText, onInputChange } = useForm({ searchText: q });
+
+  const { searchText, onInputChange, onResetForm } = useForm({ searchText: q });
   const ShowSearch = q.length === 0;
   const ShowError = q.length > 0 && searches.length === 0;
 
@@ -30,10 +32,13 @@ export const SearchPanel = () => {
     e.preventDefault();
     if (searchText.trim().length <= 1) return;
     navigate(`?q=${searchText}`);
+    onResetForm()
   };
 
   // CLOSES THE SEARCHING PANEL
   const handleCloseSearchPanel = () => {
+    // onResetForm();
+    navigate("");
     dispatch(toggleSearchPanel());
   };
 
@@ -77,34 +82,20 @@ export const SearchPanel = () => {
         </div>
         <div className="result-cards">
           {searches.map((content) => {
-            if (content.type === "2") {
-              cardOption = (
-                <Card
-                  style={{ marginLeft: "2rem" }}
-                  cardType={Number(content.type)}
-                  id={content.id}
-                  key={content.id}
-                  title={content.title}
-                  Coursedata={content.Coursedata}
-                  img={content.img}
-                  btntxt={content.btntxt}
-                  resume={content.resume}
-                />
-              );
-            } else {
-              cardOption = (
-                <Card
-                  style={{ marginLeft: "2rem" }}
-                  cardType={Number(content.type)}
-                  id={content.id}
-                  key={content.id}
-                  title={content.title}
-                  img={content.img}
-                  resume={content.resume}
-                  btntxt={"Cónocenos"}
-                />
-              );
-            }
+            cardOption = (
+              <Card
+                // style={{ marginLeft: "2rem" }}
+                cardType={1}
+                id={content.id}
+                key={content.id}
+                title={content.title}
+                Coursedata={content.Coursedata}
+                img={content.img}
+                btntxt={content.btntxt}
+                resume={content.resume}
+                price={content.price}
+              />
+            );
             return cardOption;
           })}
         </div>

@@ -5,7 +5,7 @@ import { SimpleForm } from "../components/SimpleForm";
 
 export const Login = () => {
   const [FormScreen, setFormScreen] = useState(true);
-  console.log(FormScreen)
+  // console.log(FormScreen)
 
   return (
     <div className="login-form">

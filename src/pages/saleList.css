@@ -1,22 +1,74 @@
-.salesHistoric {
+.salesHistoric, .stats-tools {
   display: flex;
   justify-content: center;
 }
 
-.sales-table {
-  border-collapse: collapse;
+.stats-tools {
+  justify-content: center;
+  margin-bottom: 1rem;
+  padding-top: 1rem;
 }
 
-.sales-table th,
-.sales-table td {
-  width: 12rem;
+.sales-table {
+  border-collapse: collapse;
+  display: inherit;
+  flex-direction: column;
+  width: auto;
+}
+
+.sales-table-hd,
+.sale-data-td {
+  min-width: 14rem;
   text-align: center;
   padding: 0.5rem;
   border: 1px solid #ccc;
 }
 
 .sales-hd-row {
+  display: flex;
+  flex-direction: row;
   background-color: #f0f0f0;
   font-weight: bold;
+}
 
+.sales-table-hd {
+  display: flex;
+  flex-direction: column;
+}
+
+.pagination {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+}
+
+.pagination button {
+  margin: 1rem;
+}
+
+.pagination button.active-page {
+  background-color: #007bff;
+  color: #fff;
+  font-weight: bold;
+}
+
+.report-btn {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  align-self: center;
+  margin: 1rem;
+}
+
+.report-l-btn,
+.report-r-btn {
+  position: absolute; /* Posiciona el botón de manera absoluta */
+  z-index: 10;
+}
+
+.report-l-btn {
+  left: 10px; /* Ajusta la posición derecha */
+}
+.report-r-btn {
+  right: 10px; /* Ajusta la posición derecha */
 }

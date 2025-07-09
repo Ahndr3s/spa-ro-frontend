@@ -54,7 +54,7 @@ export const useAuthStore = () => {
             // const {data} = await roApi.get('api/auth/renew', {name, uuid})
             const {data} = await roApi.get('api/auth/renew')
             // const user = { id: "ABC", email: data.email, name: data.name };
-            console.log('guardando user')
+            // console.log('guardando user')
             // localStorage.setItem("user", JSON.stringify(user));
             localStorage.setItem('token', data.token)
             localStorage.setItem('token-init-date', new Date().getTime())

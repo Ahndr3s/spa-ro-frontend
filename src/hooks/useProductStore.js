@@ -22,19 +22,20 @@ export const useProductStore = () => {
         // console.log(product)
         try {
             if(product.id){
-                console.log('Voy a actualizar')
+                // console.log('Voy a actualizar un producto')
                 // console.log(product)
                 await roApi.put(`/api/products/${product.id}`, product)
                 dispatch(onUpdateProduct(product))
                 return
             }
-            console.log('voy a crear')
+            // console.log('voy a crear un producto')
             // console.log(product)
             const {data} = await roApi.post(`/api/products/`, product)
             dispatch(onAddNewProduct({...product, id:data.event.id, user}))
         } catch (error) {
             console.log(error)
             Swal.fire('Error at saving ', error.response.data.msg, 'error')
+            // Swal.fire('Error at saving ', error, 'error')
         }
     }
 

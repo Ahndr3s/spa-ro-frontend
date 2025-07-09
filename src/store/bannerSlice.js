@@ -14,14 +14,14 @@ export const bannerSlice = createSlice({
       state.activeBanner = payload || {};
     },
     toggleCreateBannerMode: (state) => {
-        console.log("Previous createBanner:", state.createBanner); // Debug
+        // console.log("Previous createBanner:", state.createBanner); // Debug
         state.createBanner = !state.createBanner;
-        console.log("Updated createBanner:", state.createBanner);
+        // console.log("Updated createBanner:", state.createBanner);
     },
     toggleDeletingBannerMode: (state) => {
-      console.log("Previous DeletingBannerMode:", state.deleteBanner); // Debug
+      // console.log("Previous DeletingBannerMode:", state.deleteBanner); // Debug
       state.deleteBanner = !state.deleteBanner;
-      console.log("Updated DeletingBannerMode:", state.deleteBanner);
+      // console.log("Updated DeletingBannerMode:", state.deleteBanner);
     },
     onAddNewBanner: (state, { payload }) => {
       state.banners.push(payload);

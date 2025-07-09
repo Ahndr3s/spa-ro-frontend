@@ -14,14 +14,14 @@ export const categorySlice = createSlice({
       state.activeCategory = payload || {};
     },
     toggleCreativeCatMode: (state) => {
-      console.log("Previous createCategory:", state.createCategory); // Debug
+      // console.log("Previous createCategory:", state.createCategory); // Debug
       state.createCategory = !state.createCategory;
-      console.log("Updated createCategory:", state.createCategory);
+      // console.log("Updated createCategory:", state.createCategory);
     },
     toggleDeletingCatMode: (state) => {
-      console.log("Previous DeletingCatMode:", state.deleteCategory); // Debug
+      // console.log("Previous DeletingCatMode:", state.deleteCategory); // Debug
       state.deleteCategory = !state.deleteCategory;
-      console.log("Updated DeletingCatMode:", state.deleteCategory);
+      // console.log("Updated DeletingCatMode:", state.deleteCategory);
     },
     onAddNewCategory: (state, { payload }) => {
       state.categories.push(payload);
