@@ -111,7 +111,7 @@ export const CheckoutPage = () => {
           intent: "capture",
           commit: "true", // Importante para evitar doble login
           vault: "false",
-          debug: "true",
+          // debug: "true",
         }}
       >
         <div className="checkoutContainer">
