@@ -17,6 +17,28 @@
 .orderSummary {
   background: #000;
   color: aliceblue;
+  margin-left: 2rem;
+  margin-bottom: 2rem;
+  border-radius: 25px;
+}
+.orderSummary-footer, .orderSummary-footer-total{
+  align-items: center;
+  padding: 10px 0;
+  font-size: x-large;
+}
+.orderSummary-footer {
+  justify-content: space-evenly;
+  display: flex;
+  flex-direction: column;
+  margin-top: auto; /* Empuja el footer hacia abajo */
+  background-color: var(--bg-secondary); /* Si deseas darle un fondo */
+  color: var(--text-primary);
+}
+.orderSummary-footer-total {
+  border-radius: 25px;
+  color: #000;
+  background-color: hsl(60, 1%, 49%); /* Si deseas darle un fondo */
+  text-align: center;
 }
 .checkoutForm input[type="text"],
 input[type="number"],

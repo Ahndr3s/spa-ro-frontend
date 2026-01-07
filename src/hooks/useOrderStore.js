@@ -13,6 +13,7 @@ import Swal from "sweetalert2";
 
 export const useOrderStore = () => {
   const { orders, activeOrder } = useSelector((state) => state.order);
+  // const { contact } = useSelector((state) => state.sale);
   // const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
@@ -78,7 +79,18 @@ export const useOrderStore = () => {
       const response = await roApi.post("/api/payments/success", {
         orderId: orderID,
         accessToken: token,
+        // clientName: contact.name,
+        // clientSurname: contact.surName,
+        // clientEmail: contact.email,
       });
+      // console.log(
+      //   "orderId "+ orderID+"\n",
+      //   "accessToken "+ token+"\n",
+      //    activeOrder
+      //   "clientName "+ contact.name+"\n",
+      //   "clientSurname "+ contact.surName+"\n",
+      //   "clientEmail "+ contact.email+"\n"
+      // )
 
       // console.log("Orden aprobada:", response.data);
       return response.data;

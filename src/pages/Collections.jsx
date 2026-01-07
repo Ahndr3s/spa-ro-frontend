@@ -13,11 +13,12 @@ export const Collections = () => {
   const bannerCategory = location.state?.bannerCategory;
   // console.log(categories)
   // console.log(bannerCategory)
-  
+
   // PRODUCT FORM FIELDS DEFINITION\
   const productFormFields = (info) => ({
     productType: info?.type || "1",
-    productCategory: bannerCategory || info?.category || "6797fc0be780ae7d8b5e1467",
+    productCategory:
+      bannerCategory || info?.category || "6797fc0be780ae7d8b5e1467",
   });
 
   // Inicializar el estado del formulario con base en el tipo de formulario (product)

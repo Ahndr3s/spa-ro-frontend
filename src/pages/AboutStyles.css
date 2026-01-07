@@ -36,6 +36,30 @@
 
 .about-text {
     font-size: xx-large;
+    text-align: justify;
+}
+
+.map-container {
+  margin: 20px;
+}
+
+.map {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.location-info {
+  margin-top: 15px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+
+.location-info h3 {
+  margin-top: 0;
+  color: #333;
 }
 
 @media only screen and (max-width: 600px) {

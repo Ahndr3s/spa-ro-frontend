@@ -121,26 +121,23 @@ export const SidePanel = ({ panelType, infoType }) => {
     if (infoType !== "" || infoType !== null) {
       startDeletingProduct();
       dispatch(toggleDeletingProdMode());
-    } 
-    else console.log('No hay datos de producto que borrar')
+    } else console.log("No hay datos de producto que borrar");
   };
 
   // DELETES THE SELECTED BANNER
   const handleDeleteBanner = () => {
     if (infoType !== "" || infoType !== null) {
       startDeletingBanner();
-      dispatch(toggleDeletingBannerMode())
-    }
-    else console.log('No hay datos de banner que borrar')
+      dispatch(toggleDeletingBannerMode());
+    } else console.log("No hay datos de banner que borrar");
   };
 
   // DELETES THE SELECTED CATEGORY
   const handleDeleteCategory = () => {
     if (infoType !== "" || infoType !== null) {
       startDeletingCategory();
-      dispatch(toggleDeletingCatMode())
-    }
-    else console.log('No hay datos de vategoria que borrar');
+      dispatch(toggleDeletingCatMode());
+    } else console.log("No hay datos de vategoria que borrar");
   };
 
   // LEADS TO checkoutPage PASSING THE cartProducts and subTotal VALUES
@@ -181,7 +178,7 @@ export const SidePanel = ({ panelType, infoType }) => {
     // CART PRODUCT LIST
     case 1:
       panelOption = (
-        <div className={`sidepanel ${isVisible ? "active" : ""}`}>
+        <>
           <div className="sidepanel-header-t1">
             <h3>Mi Carrito</h3>
           </div>
@@ -197,6 +194,7 @@ export const SidePanel = ({ panelType, infoType }) => {
                   price={card.price}
                   size={card.size}
                   qty={card.qty}
+                  type={card.type}
                 />
               ))}
             </li>
@@ -207,35 +205,37 @@ export const SidePanel = ({ panelType, infoType }) => {
               Checkout
             </button>
           </div>
-        </div>
+        </>
       );
       break;
 
     // CART EMPTY
     case 2:
       panelOption = (
-        <div className={`sidepanel ${isVisible ? "active" : ""}`}>
+        <>
           <div className="sidepanel-header-t2">
             <h3>Mi Carrito</h3>
           </div>
           <div className="emptyMsg">
             <h2>Tu carrito está vacío :/</h2>
           </div>
-        </div>
+        </>
       );
       break;
 
     // PRODUCT RESUME
     case 3:
       panelOption = (
-        <div className={`sidepanel ${isVisible ? "active" : ""}`}>
+        <>
           <div className="sidepanel-header-t3">
             {setDate ? (
               <h3>Elige una Fecha</h3>
             ) : Object.keys(activeProduct).length > 0 ? (
               <h3>Agregar al Carrito</h3>
             ) : (
-              Object.keys(mostSoldProduct).length > 0 && <h3>Producto Más Vendido del Mes</h3>
+              Object.keys(mostSoldProduct).length > 0 && (
+                <h3>Producto Más Vendido del Mes</h3>
+              )
             )}
             <div className="x-contain" onClick={handleSeeProductOnCart}>
               <FontAwesomeIcon
@@ -278,14 +278,14 @@ export const SidePanel = ({ panelType, infoType }) => {
               onKeyDown={(e) => handlePickDate(e, datePicker)}
             />
           )}
-        </div>
+        </>
       );
       break;
 
     // PRODUCT/BANNER/CATEGORY FORM
     case 4:
       panelOption = (
-        <div className={`sidepanel ${isVisible ? "active" : ""}`}>
+        <>
           <div className="sidepanel-header-t3">
             <h3>Action Producto</h3>
             <div className="x-contain" onClick={handleSeeProductOnCart}>
@@ -305,14 +305,14 @@ export const SidePanel = ({ panelType, infoType }) => {
           {createCategory && (
             <SimpleForm formType={6} info={activeCategory || {}} />
           )}
-        </div>
+        </>
       );
       break;
 
     // DELETING PRODUCT
     case 5:
       panelOption = (
-        <div className={`sidepanel ${isVisible ? "active" : ""}`}>
+        <>
           <div className="sidepanel-header-t2">
             <h3>Eliminar Producto</h3>
           </div>
@@ -376,14 +376,14 @@ export const SidePanel = ({ panelType, infoType }) => {
               )}
             </div>
           </div>
-        </div>
+        </>
       );
       break;
 
     // SALES LIST
     case 6:
       panelOption = (
-        <div className={`sidepanel ${isVisible ? "active" : ""}`}>
+        <>
           <div
             className="x-contain"
             style={{
@@ -461,14 +461,18 @@ export const SidePanel = ({ panelType, infoType }) => {
               Total: <em className="saleDetails-data">${activeSale.total}</em>
             </div>
           </div>
-        </div>
+        </>
       );
       break;
 
     default:
       break;
   }
-  return <>{panelOption}</>;
+  return (
+    <div className={`sidepanel ${isVisible ? "active" : ""}`}>
+      {panelOption}
+    </div>
+  );
 };
 
 SidePanel.propTypes = {

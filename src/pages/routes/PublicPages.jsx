@@ -10,6 +10,8 @@ import { Banners } from "../Banners.jsx";
 import { Categories } from "../Categories.jsx";
 import { SuccessPage } from "../SuccessPage.jsx";
 import { SalesList } from "../salesList.jsx";
+import { Footer } from "../../components/footer.jsx";
+
 
 
 export const PublicPages = () => {
@@ -36,6 +38,7 @@ export const PublicPages = () => {
         <Route path="salesList" element={<SalesList />} />
         <Route path="/" element={<Navigate to={"home"} />} />
       </Routes>
+      <Footer/>
     </>
   );
 };

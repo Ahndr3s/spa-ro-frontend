@@ -51,7 +51,7 @@ export const Card = (props) => {
   const { status } = useAuthStore();
   const isSearchPanelVisible = useSelector(
     (state) => state.interactivePanels.searchPanelVisible
-  );  
+  );
 
   useEffect(() => {
     if (!props.size) return;
@@ -75,7 +75,7 @@ export const Card = (props) => {
 
   // PRODUCT WINDOW FROM CARD SLIDER
   const handleClickProductDetails = (props) => {
-    if(isSearchPanelVisible) dispatch(toggleSearchPanel());
+    if (isSearchPanelVisible) dispatch(toggleSearchPanel());
     navigate(`/productPage/${props.id}`, {
       replace: true,
       state: { type: props.cardType },
@@ -312,8 +312,11 @@ export const Card = (props) => {
             <h4 className="product-title" id="product-title">
               {props.title}
             </h4>
-
-            <h5 className="product-size">{props.size}</h5>
+            {props.type === 1 && (
+              <>
+                <h5 className="product-size">{props.size}</h5>
+              </>
+            )}
             <h5 className="product-price">${props.price}</h5>
           </div>
           <div className="cart-card-actions">
@@ -505,7 +508,11 @@ export const Card = (props) => {
             <h4 className="product-title" id="product-title">
               {props.title}
             </h4>
-            <h5 className="product-size">{props.size}</h5>
+            {props.type === 1 && (
+              <>
+                <h5 className="product-size">{props.size}</h5>
+              </>
+            )}
             <h5 className="product-price">${props.price}</h5>
             <h5 className="product-price">x{props.qty}</h5>
           </div>
@@ -535,6 +542,7 @@ export const Card = (props) => {
 Card.propTypes = {
   id: PropTypes.string,
   cardType: PropTypes.number,
+  type: PropTypes.number,
   title: PropTypes.string,
   img: PropTypes.array,
   size: PropTypes.string,

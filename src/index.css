@@ -1,3 +1,5 @@
+@import url('./assets/fonts/fonts.css');
+
 body {
   margin: 0;
   margin-top: 8vh; /* igual a la altura del navbar */
@@ -7,7 +9,7 @@ body {
   /* font-family: roboto, sans-serif, Inter, system-ui, Avenir, Helvetica, Arial; */
   /* font-family: "Open Sans", Arial, Helvetica, sans-serif; */
   /* font-family: 'Montserrat', 'SUIT', sans-serif; */
-  font-family: "Steelfish Bold", "SUIT", sans-serif;
+  font-family: "MiFuente", "SUIT", sans-serif;
   font-weight: 400;
 
   font-synthesis: none;
@@ -21,7 +23,8 @@ body {
   --transition-speed: 600ms;
 }
 
-.routes, .crud-btn {
+.routes,
+.crud-btn {
   display: flex;
 }
 
@@ -30,6 +33,28 @@ body {
   justify-content: center;
   padding-top: 2rem;
 }
+
+/*----------------loading icon styles starts----------------*/
+.spinner-custom {
+  font-size: 48px;
+  display: flex;
+  justify-content: center;
+  margin-top: 25rem;
+}
+
+.custom-spin {
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+/*----------------loading icon styles ends----------------*/
 
 /*----------------searchPanel styles starts----------------*/
 .searchPanel {
@@ -86,21 +111,22 @@ body {
 
 /*----------------Sidepanel styles starts----------------*/
 .sidepanel {
-  position: absolute;
-  right: 0;
+  position: fixed; /* Cambiado de absolute a fixed para mejor comportamiento */
+  right: -470px; /* Inicialmente fuera de la pantalla */
   top: 67px;
   background-color: var(--bg-primary);
-  width: 0px;
-  height: calc(100vh - 45px);
-  transition: all 0.3s ease-in;
-  overflow: hidden;
+  width: 470px;
+  height: calc(100vh - 67px); /* Ajustado para coincidir con el top */
+  transition: right 0.3s ease-in-out;
+  overflow-y: auto; /* Permite scroll si el contenido es muy largo */
   z-index: 1000;
   display: flex;
   flex-direction: column;
 }
 
 .sidepanel.active {
-  width: 470px;
+  right: 0;
+  box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2); /* Sombra para mejor efecto */
 }
 
 .sidepanel-header-t1,
@@ -121,12 +147,12 @@ body {
 }
 
 /*----------------Sidepanel T1 styles starts----------------*/
-.products-onCart{
+.products-onCart {
   display: flex;
   flex-direction: row;
 }
 
-.products-onCart .nav-item{
+.products-onCart .nav-item {
   margin-left: 3rem;
   margin-bottom: 1rem;
 }
@@ -225,16 +251,23 @@ body {
 }
 /*----------------sidepanel T6 styles ends----------------*/
 
-.sidepanel-footer {
+.sidepanel-footer, .sidepanel-footer-total {
   align-items: center;
-  color: var(--text-primary);
   display: flex;
   flex-direction: column;
   font-size: x-large;
   justify-content: space-evenly;
   margin-top: auto; /* Empuja el footer hacia abajo */
   padding: 10px 0;
+}
+
+.sidepanel-footer {
   background-color: var(--bg-secondary); /* Si deseas darle un fondo */
+  color: var(--text-primary);
+}
+.sidepanel-footer-total {
+  color: #000;
+  background-color: hsl(60, 1%, 49%); /* Si deseas darle un fondo */
 }
 /*----------------sidepanel styles ends----------------*/
 
@@ -430,8 +463,25 @@ body {
 
 .best-seller-container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   padding-bottom: 2rem;
+}
+
+.best-seller-cards {
+  display: inherit;
+  flex-direction: row;
+}
+
+.product-exhibit > div:nth-child(even) {
+  background-color: black;
+  color: white;
+}
+
+.product-exhibit > div:nth-child(even) h1,
+.product-exhibit > div:nth-child(even) .best-seller-cards,
+.product-exhibit > div:nth-child(even) .top1 {
+  color: white;
 }
 
 .top1 .product-card {
@@ -645,7 +695,7 @@ body {
 .product-matrix-container .product-card {
   margin-bottom: 5rem;
   margin-left: 1rem;
-  margin-right: 1rem; 
+  margin-right: 1rem;
 }
 
 /*----------------image-Matrix styles ends----------------*/
@@ -692,30 +742,75 @@ textarea,
 
 /*----------------Form styles ends----------------*/
 
+/*----------------Footer styles starts----------------*/
+.footer {
+  display: flex;
+  justify-content: space-around;
+  font-size: small;
+  width: 100%;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  padding-top: 1rem;
+  flex-direction: column;
+}
+
+.footer-headers, .footer-final {
+  display: inherit;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.footer-list {
+  display: inherit;
+  flex-direction: column;
+  padding-bottom: 1rem;
+}
+
+.contact-icon {
+  margin-right: 1rem;
+}
+
+.footer-ls-elmnt{
+  display: flex;
+  flex-direction: row;
+  font-size: medium;
+  padding-bottom: 1rem;
+}
+
+.love-icon{ 
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+/*----------------Footer styles ends----------------*/
+
 /*-------------------------Responsive Styles Starts--------------------------*/
 
 @media only screen and (max-width: 600px) {
   /*----------------Responsive Sidepanel styles Starts----------------*/
+  .sidepanel {
+    width: 100%; /* Ocupa todo el ancho en móvil */
+    max-width: 320px; /* Pero no más de 320px */
+    right: -100%; /* Ahora se esconde completamente */
+    transition: right 0.3s ease-in-out, width 0s 0.3s; /* Retrasamos la transición de width */
+  }
+
   .sidepanel.active {
-    width: 320px;
+    right: 0;
+    width: 100%;
+    max-width: 320px;
+    transition: right 0.3s ease-in-out; /* Solo animamos right al activar */
   }
 
-  .sidepanel {
-    width: 0; /* Ambos inician ocultos */
-    overflow: hidden;
-  }
-
+  /* Ajustes para el contenido en móvil */
   .sidepanel-header-t3 h3 {
-    margin-left: 2rem;
-    padding-right: unset;
+    margin-left: 1rem;
+    margin-right: 1rem;
   }
-
-  .x-container {
-    position: absolute;
-  }
-
-  .sidepanel {
-    transition: width 0.3s ease-in-out;
+  
+  /* Asegurar que el contenido no desborde */
+  .sidepanel > * {
+    max-width: 100%;
+    box-sizing: border-box;
   }
   /*----------------Responsive Sidepanel styles Ends----------------*/
 

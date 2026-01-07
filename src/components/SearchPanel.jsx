@@ -32,7 +32,7 @@ export const SearchPanel = () => {
     e.preventDefault();
     if (searchText.trim().length <= 1) return;
     navigate(`?q=${searchText}`);
-    onResetForm()
+    onResetForm();
   };
 
   // CLOSES THE SEARCHING PANEL

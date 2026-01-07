@@ -154,6 +154,7 @@ export const ProductPage = () => {
           <div className="product-info">
             <p>{content?.info}</p>
           </div>
+          <hr />
           <div className="shipment-info">
             <h4>Información de Envíos</h4>
             <p>

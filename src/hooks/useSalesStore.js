@@ -31,25 +31,29 @@ export const useSalesStore = () => {
 
   // TRIGGERS THE REQUEST TO REGISTER AND UPDATE A SALE RECORD
   const startSavingSale = async (contactData, activeOrder) => {
-    const reg = contact.region.split(".");
+    console.log(contactData);
+    // const reg = contact.region.split(".");
+    const reg = contactData.contactProStaReg.split(".");
     const sale = {
-      type: contactData.type,
+      type: contactData.contactType,
       saleDate: formatedDate,
-      clientName: `${contactData.name} ${contactData.surName}`,
-      clientEmail: contactData.email,
+      clientName: `${contactData.contactName} ${contactData.contactSurName}`,
+      clientEmail: contactData.contactEmail,
       sellingProducts: activeOrder.sellingProducts,
-      contactAddress: `${contact.address} ${contact.zipCode} ${contact.city} ${reg[0]}`,
+      contactAddress: `${contact.contactAddress} ${contact.contactZipCode} ${contact.contactCity} ${reg[0]}`,
       subTotal: parseFloat(activeOrder.subTotal),
-      // contactReg: reg,
+      // subTotal: parseFloat(activeOrder.subTotal) +
+      //               parseFloat(activeOrder.subTotal * 0.16) +
+      //               parseFloat(reg[1]),
       contactReg: reg[0],
       regTariff: parseFloat(reg[1]),
+      Iva: parseFloat(activeOrder.subTotal * 0.16),
       // user: contact.user
     };
     // console.log("----------------THE REAL SALE----------------");
     // console.log(sale);
     // console.log("--------------------------------");
-    // console.log(sale.subTotal+' '+typeof(sale.subTotal));
-    // console.log(sale.regTariff+' '+typeof(sale.regTariff));
+   
 
     try {
       let response;
@@ -77,8 +81,8 @@ export const useSalesStore = () => {
     try {
       // const { data } = await roApi.get("/api/sales/");
       const { data } = await roApi.get("/api/sales/summary/salesOfTheMonth/");
-      console.dir('consegui esto')
-      console.dir(data)
+      // console.dir('consegui esto')
+      // console.dir(data)
       // dispatch(onLoadSales(data.sales));
       dispatch(onLoadSales(data));
     } catch (error) {

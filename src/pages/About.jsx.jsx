@@ -1,3 +1,4 @@
+// import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faInstagram,
@@ -5,11 +6,17 @@ import {
   faFacebook,
 } from "@fortawesome/free-brands-svg-icons";
 import "./AboutStyles.css";
+import { Map } from "../components/Map";
 
 export const About = () => {
   const instagramUrl = "https://www.instagram.com/iatutores/";
   const facebookUrl = "https://www.facebook.com/iatutores?mibextid=ZbWKwL";
   const youtubekUrl = "https://www.youtube.com/@IATutores";
+  // const [coordinates, setCoordinates] = useState({
+  //   lat:21.124691354708176, lng:-101.6849350046934
+  // });
+  
+  const coordinates = {lat:21.12471403566903, lng:-101.6849341376217}
 
   return (
     <>
@@ -51,7 +58,7 @@ export const About = () => {
         <p className="about-text">
           Con más de 20 años de experiencia y ampliamente reconocidos por
           nuestro compromiso con el cliente y la calidad de nuestros productos.
-          Ahora <b>Creaciones Paola</b> se reinventa para expandirnos y crear
+          Ahora <b>Disfraces Rossmina</b> se reinventa para expandirnos y crear
           nuevas experiencias para todos.
         </p>
         <p className="about-text">
@@ -60,8 +67,14 @@ export const About = () => {
           confianza y preferencia.
         </p>
       </div>
-      <h2 className="about-title">Ubicación</h2>
+      <h2 className="about-title">Ubicaciones</h2>
       {/* TODO: USAR SNIPPET DE MAPA SEÑALANDO LA TIENDA */}
+       <Map 
+          apiKey={"AIzaSyDXJTrcRhVZmShEBh3IvAW1WDw0DLew2bk"}
+          markerPosition={coordinates}
+          markerTitle="Mi ubicación especial"
+          markerColor="#4285F4"  
+        />
     </>
   );
 };

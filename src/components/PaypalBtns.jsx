@@ -31,6 +31,7 @@ export const PaypalBtns = ({ createOrder, onApprove }) => {
         onApprove={async (data) => {
           try {
             await onApprove(data);
+            // console.log(data)
           } catch (err) {
             setError(err);
           }
